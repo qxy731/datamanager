@@ -88,8 +88,10 @@ public class MyKafkaConsumerServiceImpl  implements MyKafkaConsumerService {
 		Gson gson = new Gson();
 		Map<String,Object> map = gson.fromJson(resultJsonStr, new TypeToken<HashMap<String,Object>>(){}.getType());
         if(map==null)return null;
+		@SuppressWarnings("unchecked")
 		Map<String,Object> payload = (Map<String,Object>)map.get("payload");
 		if(payload==null)return null;
+		@SuppressWarnings("unchecked")
 		Map<String,Object> resultMap = (Map<String,Object>)payload.get("resultMap");
 		if(resultMap==null)return null;
 		return resultMap;
