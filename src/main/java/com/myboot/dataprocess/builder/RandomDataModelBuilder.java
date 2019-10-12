@@ -94,11 +94,11 @@ public class RandomDataModelBuilder {
 	    //COOKIE地址	Text	40
 	    entity.setCookie(RandomIpBuilder.getRandomIp());
 	    //证件号码(公安)	Text	25
-	    entity.setIdvalue(certNo);
+	    entity.setIDVALUE(certNo);
 	    //证件类型(公安)	Text	25
-	    entity.setIdtype(RandomNumberBuilder.getRangeRandom2Str(10,30));
+	    entity.setIDTYPE(RandomNumberBuilder.getRangeRandom2Str(10,30));
 	    //配偶证件号码	Text	25
-	    entity.setSpouseidnumber(RandomCertNoBuilder.getRandomCertNo());
+	    entity.setSPOUSEIDNUMBER(RandomCertNoBuilder.getRandomCertNo());
 	    //app设备Id	Text	70
 	    entity.setAppID(RandomNumberBuilder.getRandomGuid(17));
 	    //app手机设备标示码	Text	70
@@ -106,13 +106,14 @@ public class RandomDataModelBuilder {
 	    //app渠道uuid	Text	70
 	    entity.setApp_uuid(RandomNumberBuilder.getRandomGuid(16));
 	    //IP地址	Text	40
-	    entity.setIp(RandomIpBuilder.getRandomIp());
+	    entity.setIP(RandomIpBuilder.getRandomIp());
 	    //审批结果	Text	10	通过，不通过
 	    entity.setApprovalResult(ApprovalResult.randomType().code);
 	    //调查结论	Text	2	值：K,F,S,空
 	    entity.setResearchConclusion(ResearchConclusion.randomType().code);
 	    //报警代码	Text	2	值：H,S,C
 	    entity.setAlarmCode(AlarmCode.randomType().code);
+	    entity.setFlag("");
 	    return entity;
 	}
 	

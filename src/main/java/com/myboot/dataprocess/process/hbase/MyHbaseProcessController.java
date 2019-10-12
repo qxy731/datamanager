@@ -1,8 +1,11 @@
 package com.myboot.dataprocess.process.hbase;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,15 +36,15 @@ public class MyHbaseProcessController {
 	
 	@ApiOperation(value="HBase造数据", notes="HBase造数据")
 	@RequestMapping(value = "/assemble", method = {RequestMethod.POST,RequestMethod.GET})
-	public StatusInfo<String> assemble(HttpServletRequest request) {
+	public StatusInfo<String> assemble(@RequestBody Map<String,String> map) {
 		StatusInfo<String> spi = null;
     	try {
-    		spi = new StatusInfo<String>();
-    		String startDate = request.getParameter("startDate");
-    		String endDate = request.getParameter("endDate");
-    		int total = Integer.valueOf(request.getParameter("total"));
+    		String startDate = map.get("startDate")==null?"2019-10-13":map.get("startDate").toString();
+    		String endDate = map.get("endDate")==null?"2019-10-13":map.get("endDate").toString();
+    		int total = map.get("total")==null?0:Integer.valueOf(map.get("total").toString());
     		/**直接put到hbase**/
 			service.save(total,startDate,endDate);
+			spi = new StatusInfo<String>();
     	}catch(Exception e) {
 			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
 			log.info(ErrorMessage.msg_opt_fail.getMsg());
@@ -54,8 +57,8 @@ public class MyHbaseProcessController {
 	public StatusInfo<String> process(HttpServletRequest request) {
 		StatusInfo<String> spi = null;
     	try {
-    		spi = new StatusInfo<String>();
 			service.process();
+			spi = new StatusInfo<String>();
     	}catch(Exception e) {
 			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
 			log.info(ErrorMessage.msg_opt_fail.getMsg());

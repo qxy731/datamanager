@@ -19,10 +19,10 @@ public class HbaseProcessServiceImplTest {
 	
 	@Test
     public void testSave() throws Exception {
-		int total = 200;
+		/*int total = 200;
 		String startDate = "2019-04-01";
 		String endDate = "2019-10-08";
-		//service.save(total, startDate, endDate);
+		service.save(total, startDate, endDate);*/
 		//service.other();//第一步先测试通不通
 		//System.out.println("--------------测试----------");
 	}

@@ -247,7 +247,7 @@ public class MyHbaseProcessRepository {
 				   f.setAccessible(true);
 				   //得到对应字段的属性名，
 				   String column = f.getName();
-				   column = column.substring(0, 1).toUpperCase()+column.substring(1);
+				   //column = column.substring(0, 1).toUpperCase()+column.substring(1);
 				   //得到对应字段属性值
 				   String columnText = (String)f.get(object);
 				   //得到对应字段的类型

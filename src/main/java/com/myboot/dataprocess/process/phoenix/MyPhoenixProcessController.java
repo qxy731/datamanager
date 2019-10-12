@@ -45,7 +45,7 @@ public class MyPhoenixProcessController {
 			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
 			log.info(ErrorMessage.msg_opt_fail.getMsg());
 		}
-    	return spi ;
+    	return spi;
 	}
 
 }

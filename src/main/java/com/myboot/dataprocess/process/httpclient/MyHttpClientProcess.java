@@ -1,7 +1,9 @@
 package com.myboot.dataprocess.process.httpclient;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
@@ -14,6 +16,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 import com.google.gson.Gson;
+import com.myboot.dataprocess.tools.CommonTool;
 
 import jline.internal.Log;
 
@@ -22,21 +25,25 @@ public class MyHttpClientProcess {
 	public static String post(Map<String,Object> map) {
 		// 获得Http客户端(可以理解为:你得先有一个浏览器;注意:实际上HttpClient与浏览器是不一样的)
 		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+		Map<String,Object> newMap = new LinkedHashMap<String,Object>();
+		newMap.putAll(map);
 		Gson gson = new Gson();
 		// 创建Post请求
-		HttpPost httpPost = new HttpPost("http://localhost:13551/call");
+		HttpPost httpPost = new HttpPost("http://182.180.115.236:13551/call");
+		String reqNo = UUID.randomUUID().toString();
+		newMap.put("reqNo",reqNo);
+		String applicationDate = map.get("ApplicationDate")==null?CommonTool.getCurrentDate():map.get("ApplicationDate").toString();
+		newMap.put("FLAT_TRAD_DATE_TIME", applicationDate + " 00:00:00");
 		String jsonString = gson.toJson(map);
-		String reqNo = map.get("ApplicationNumber")==null?"ApplicationNumber":map.get("ApplicationNumber").toString();
 		StringEntity entity = new StringEntity(jsonString, "UTF-8");
 		// post请求是将参数放在请求体里面传过去的;这里将entity放入post请求体中
 		httpPost.setEntity(entity);
 		httpPost.setHeader("Content-Type", "application/json;charset=utf8");
-		httpPost.setHeader("reqNo",reqNo);
-		httpPost.setHeader("reqTimeMs",System.currentTimeMillis()+"");
+		//httpPost.setHeader("reqTimeMs",System.currentTimeMillis()+"");
 		httpPost.setHeader("api","tradErm02");
 		httpPost.setHeader("reqMode", "slow");
 		httpPost.setHeader("dinstMode", "his");
-		httpPost.setHeader("dataMode", "real_date");
+		httpPost.setHeader("dataMode", "real_data");
 		// 响应模型
 		CloseableHttpResponse response = null;
 		try {

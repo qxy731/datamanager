@@ -1,6 +1,6 @@
 server:
   port: 8090
-  context-path: /dataprocess
+  context-path: /datamanager
 
 
 

@@ -104,7 +104,7 @@ public class MyPhoenixProcessRepository {
 			sb.append("(").append(columns).append(")");
 			sb.append(" values (").append(values).append(")");
 			//"upsert into tab(col1,col2) values(1,'test1')"
-			log.info("insert into phoenix table sql:"+sb.toString());
+			log.info("upsert into phoenix table sql:"+sb.toString());
 			stmt = conn.prepareStatement(sb.toString());
 			stmt.execute();
 		}catch(Exception e) {

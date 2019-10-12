@@ -9,9 +9,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.myboot</groupId>
-	<artifactId>dataprocess</artifactId>
+	<artifactId>datamanager</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>dataprocess</name>
+	<name>datamanager</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -86,7 +86,6 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.5.10</version>
 		</dependency>
 		<dependency>
 			<groupId>com.lmax</groupId>
@@ -171,6 +170,14 @@
 					<groupId>log4j</groupId>
 					<artifactId>log4j</artifactId>
 				</exclusion>
+				<exclusion>
+					 <groupId>javax.servlet</groupId>
+    				 <artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					 <groupId>javax.servlet.jsp</groupId>
+    				 <artifactId>jsp-api</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -218,6 +225,10 @@
 				<exclusion>
 					<artifactId>guava</artifactId>
 					<groupId>com.google.guava</groupId>
+				</exclusion>
+				<exclusion>
+					 <groupId>javax.servlet</groupId>
+    				 <artifactId>servlet-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

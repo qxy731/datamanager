@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -38,7 +39,7 @@ public class MyKafkaConsumerServiceImpl  implements MyKafkaConsumerService {
 	@Autowired
 	private MyPhoenixProcessService phoenixService;
 	
-	/*@KafkaListener(topics = {"${kafka.other.source.topic}"})*/
+	@KafkaListener(topics = {"${kafka.other.source.topic}"})
     public void listener(String content) {
         //log.info("==================MyKafkaCustermer listener start=========================");
 		log.info("the" + (count++) + " message from kafka :" + content );
@@ -49,14 +50,14 @@ public class MyKafkaConsumerServiceImpl  implements MyKafkaConsumerService {
 				if(mapMessage == null) {
 					return;
 				}
-				String rowkey = createRowkeyFromKafka(mapMessage);
-				if(rowkey == null) {
+				String applicationNumber = createRowkeyFromKafka(mapMessage);
+				if(applicationNumber == null) {
 					return;
 				}
 				/**第一步：向akka传送数据并回写Kafka*/
-				processAkka(rowkey,mapMessage);
+				processAkka(applicationNumber,mapMessage);
 				/**第二步：向phoenix保存数据*/
-				processPhoenix(rowkey,mapMessage);
+				processPhoenix(applicationNumber,mapMessage);
 				long end = System.currentTimeMillis();
 				long mins = start - end;
 				log.info("kafka consumer total cost :" + mins +"ms");
@@ -83,6 +84,17 @@ public class MyKafkaConsumerServiceImpl  implements MyKafkaConsumerService {
 		return dataObject;
 	}
 	
+	private Map<String, Object> processResultContent(String resultJsonStr){
+		Gson gson = new Gson();
+		Map<String,Object> map = gson.fromJson(resultJsonStr, new TypeToken<HashMap<String,Object>>(){}.getType());
+        if(map==null)return null;
+		Map<String,Object> payload = (Map<String,Object>)map.get("payload");
+		if(payload==null)return null;
+		Map<String,Object> resultMap = (Map<String,Object>)payload.get("resultMap");
+		if(resultMap==null)return null;
+		return resultMap;
+	}
+	
 	/**
      * 根据数据构建rowkey
      * @return
@@ -95,7 +107,7 @@ public class MyKafkaConsumerServiceImpl  implements MyKafkaConsumerService {
      * 向akka传送数据
      * @throws Exception 
      */
-    public void processAkka(String rowkey,Map<String, Object> mapMessage) {
+    public void processAkka(String applicationNumber,Map<String, Object> mapMessage) {
     	try {
 	    	long sendAkkaStart = System.currentTimeMillis();
 	        //String akkaApi = myKafkaConfiguration.getOtherParameter("akka_api");
@@ -103,13 +115,13 @@ public class MyKafkaConsumerServiceImpl  implements MyKafkaConsumerService {
 			//Map<String, Map<String, Object>> dtoResult = akkaProcess.getResultsFormEvalResultDto(mapMessage, akkaApi, rowkey); 
 			
 	        String retJsonStr = MyHttpClientProcess.post(mapMessage);
-	        Map<String,Object> retMap = processContent(retJsonStr);
+	        Map<String,Object> retMap = processResultContent(retJsonStr);
 	        //dtoResult.
 			long sendAkkaEnd = System.currentTimeMillis();
 			long minsAkka = sendAkkaEnd - sendAkkaStart;
 			log.info("send source message to akka cost :"+ minsAkka +"ms");
 			long sendKafkaStart = System.currentTimeMillis();
-			retMap.put("ApplicationNumber",rowkey);
+			retMap.put("ApplicationNumber",applicationNumber);
             String destTopic = myKafkaConfiguration.getOtherParameter("dest.topic");
             kafkaService.sendResultMessage(destTopic,retMap);
 			/*for(Map<String,Object> results : dtoResult.values()) {
@@ -121,6 +133,7 @@ public class MyKafkaConsumerServiceImpl  implements MyKafkaConsumerService {
 			long sendKafkaEnd = System.currentTimeMillis();
 			long minsKafka = sendKafkaEnd - sendKafkaStart;
 			log.info("send result message to kafka cost :"+ minsKafka +"ms");
+			log.info(retMap.toString());
     	}catch(Exception e) {
     		log.error(" send source message to kafka is fail...");
     		log.error(e.getMessage());
@@ -131,10 +144,11 @@ public class MyKafkaConsumerServiceImpl  implements MyKafkaConsumerService {
      * 向phoenix保存数据
      * @throws Exception 
      */
-    public void processPhoenix(String rowkey,Map<String, Object> mapMessage) {
+    public void processPhoenix(String applicationNumber,Map<String, Object> mapMessage) {
     	try {
 	    	long sendPhoenixStart = System.currentTimeMillis();
 	    	Map<String,String> map = new LinkedHashMap<String,String>();
+	    	//Map<String,Object> retMap = processResultContent(retJsonStr);
 			for(Map.Entry<String,Object> entry : mapMessage.entrySet()) {
 			String key = entry.getKey();
 		    Object value = entry.getValue();
