@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +36,8 @@ public class MyPhoenixProcessRepository {
     		 String url = myKafkaConfiguration.getOtherParameter("jdbc.url");
     		 return DriverManager.getConnection(url);
          } catch (Exception e) {
-             log.error("[hbase]获取连接异常!!" + e.getMessage());
-             e.printStackTrace();
+             log.error("[phoenix]获取连接异常!!" + e.getMessage());
+             //e.printStackTrace();
          }
     	 return null;
     }

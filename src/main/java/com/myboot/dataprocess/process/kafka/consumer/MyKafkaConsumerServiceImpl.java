@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.myboot.dataprocess.process.akka.AkkaProcess;
+import com.myboot.dataprocess.process.httpclient.MyHttpClientProcess;
 import com.myboot.dataprocess.process.kafka.common.MyKafkaConfiguration;
 import com.myboot.dataprocess.process.kafka.producer.MyKafkaProducerService;
 import com.myboot.dataprocess.process.phoenix.MyPhoenixProcessService;
@@ -98,19 +98,26 @@ public class MyKafkaConsumerServiceImpl  implements MyKafkaConsumerService {
     public void processAkka(String rowkey,Map<String, Object> mapMessage) {
     	try {
 	    	long sendAkkaStart = System.currentTimeMillis();
-	        String akkaApi = myKafkaConfiguration.getOtherParameter("akka_api");
-			AkkaProcess akkaProcess = AkkaProcess.getInstance();
-			Map<String, Map<String, Object>> dtoResult = akkaProcess.getResultsFormEvalResultDto(mapMessage, akkaApi, rowkey); 
+	        //String akkaApi = myKafkaConfiguration.getOtherParameter("akka_api");
+			//AkkaProcess akkaProcess = AkkaProcess.getInstance();
+			//Map<String, Map<String, Object>> dtoResult = akkaProcess.getResultsFormEvalResultDto(mapMessage, akkaApi, rowkey); 
+			
+	        String retJsonStr = MyHttpClientProcess.post(mapMessage);
+	        Map<String,Object> retMap = processContent(retJsonStr);
+	        //dtoResult.
 			long sendAkkaEnd = System.currentTimeMillis();
 			long minsAkka = sendAkkaEnd - sendAkkaStart;
 			log.info("send source message to akka cost :"+ minsAkka +"ms");
 			long sendKafkaStart = System.currentTimeMillis();
-			for(Map<String,Object> results : dtoResult.values()) {
+			retMap.put("ApplicationNumber",rowkey);
+            String destTopic = myKafkaConfiguration.getOtherParameter("dest.topic");
+            kafkaService.sendResultMessage(destTopic,retMap);
+			/*for(Map<String,Object> results : dtoResult.values()) {
 	            //将原来的数据一起放入
 	            results.putAll(mapMessage);
 	            String destTopic = myKafkaConfiguration.getOtherParameter("dest.topic");
 	            kafkaService.sendResultMessage(destTopic,results);
-	        }
+	        }*/
 			long sendKafkaEnd = System.currentTimeMillis();
 			long minsKafka = sendKafkaEnd - sendKafkaStart;
 			log.info("send result message to kafka cost :"+ minsKafka +"ms");
@@ -126,9 +133,9 @@ public class MyKafkaConsumerServiceImpl  implements MyKafkaConsumerService {
      */
     public void processPhoenix(String rowkey,Map<String, Object> mapMessage) {
     	try {
-    	long sendPhoenixStart = System.currentTimeMillis();
-    	Map<String,String> map = new LinkedHashMap<String,String>();
-		for(Map.Entry<String,Object> entry : mapMessage.entrySet()) {
+	    	long sendPhoenixStart = System.currentTimeMillis();
+	    	Map<String,String> map = new LinkedHashMap<String,String>();
+			for(Map.Entry<String,Object> entry : mapMessage.entrySet()) {
 			String key = entry.getKey();
 		    Object value = entry.getValue();
 		    String cvalue = "";

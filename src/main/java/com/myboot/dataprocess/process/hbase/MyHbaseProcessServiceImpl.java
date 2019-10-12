@@ -7,10 +7,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.myboot.dataprocess.process.akka.AkkaProcess;
 import com.myboot.dataprocess.process.hbase.common.HbaseDataModelProcess;
 import com.myboot.dataprocess.process.hbase.common.MyHbaseConfiguration;
-import com.myboot.dataprocess.process.kafka.common.MyKafkaConfiguration;
+import com.myboot.dataprocess.process.httpclient.MyHttpClientProcess;
 import com.myboot.dataprocess.tools.CommonTool;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +31,8 @@ public class MyHbaseProcessServiceImpl implements MyHbaseProcessService {
 	@Autowired
     private MyHbaseConfiguration myHbaseConfiguration;
 	
-	@Autowired
-	private MyKafkaConfiguration myKafkaConfiguration;
+/*	@Autowired
+	private MyKafkaConfiguration myKafkaConfiguration;*/
 	
 	/**
 	 * 创建表
@@ -267,12 +266,11 @@ public class MyHbaseProcessServiceImpl implements MyHbaseProcessService {
 				for(int i=0;i<list.size();i++) {
 					count++;
 					Map<String,Object> mapMessage = (Map<String,Object>)list.get(i);
-					String rowkey = mapMessage.get("ApplicationNumber")==null?"ApplicationNumber":mapMessage.get("ApplicationNumber").toString();
-					String akkaApi = myKafkaConfiguration.getOtherParameter("akka_api");
+					//String rowkey = mapMessage.get("ApplicationNumber")==null?"ApplicationNumber":mapMessage.get("ApplicationNumber").toString();
 					//akkaProcess.getResultsFormEvalResultDto(mapMessage, akkaApi, rowkey);
+					MyHttpClientProcess.post(mapMessage);
 					log.info("历史数据预处理第"+count+"条："+mapMessage);
 				}
-				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

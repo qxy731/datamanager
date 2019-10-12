@@ -348,7 +348,7 @@ public class MyHbaseProcessRepository {
 		log.info("---------------查询 START-----------------");
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		//根据rowkey查询
-		Table table =connection.getTable(TableName.valueOf(tableName));
+		Table table = connection.getTable(TableName.valueOf(tableName));
 		Scan scan = new Scan();
 		//设置取值范围
 		if (StringUtils.isNotEmpty(startRowKey)) {
