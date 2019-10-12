@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.22.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.myboot</groupId>
+	<artifactId>dataprocess</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>dataprocess</name>
+	<description>Demo project for Spring Boot</description>
+
+	<properties>
+		 <slf4j.version>1.7.26</slf4j.version>
+		<java.version>1.8</java.version>
+		<spring-cloud.version>Greenwich.SR3</spring-cloud.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <hadoop.version>2.6.0-cdh5.16.1</hadoop.version>
+        <hbase.version>1.2.0-cdh5.16.1</hbase.version>
+        <kafka.version>0.10.0.0</kafka.version>
+        <zookeeper.version>3.4.5-cdh5.16.1</zookeeper.version>
+        <spark.version>2.3.0</spark.version>
+        <scala.binary.version>2.11</scala.binary.version>
+        <maven-jar-plugin.version>3.0.0</maven-jar-plugin.version>
+        <!-- <akka-core.version>2.6.0-M5</akka-core.version>
+        <akka-http.version>10.1.9</akka-http.version> -->
+        <phoenix.version>4.14.0-cdh5.14.2</phoenix.version>
+	</properties>
+	
+	<repositories>
+        <repository>
+            <id>hbase</id>
+            <name>Cloudera Repository</name>
+            <url>https://mvnrepository.com/artifact/org.apache.hbase/hbase</url>
+        </repository>
+        <repository>
+            <id>cloudera-repo</id>
+            <name>Cloudera Repository</name>
+            <url>https://repository.cloudera.com/artifactory/cloudera-repos</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+       	</dependency>
+       	
+       	<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+        </dependency>
+        
+		<!-- <dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-streams</artifactId>
+		</dependency> -->
+		<!-- <dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-zookeeper-config</artifactId>
+		</dependency> -->
+		 <!-- kafka -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_${scala.binary.version}</artifactId>
+            <version>${kafka.version}</version>
+            <exclusions>
+			   <exclusion>
+			      <groupId>org.springframework.boot</groupId>
+			      <artifactId>spring-boot-starter-logging</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>org.slf4j</groupId>
+			      <artifactId>slf4j-log4j12</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>log4j</groupId>
+			      <artifactId>log4j</artifactId>
+			   </exclusion>
+			</exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka.version}</version>
+            <exclusions>
+			   <exclusion>
+			      <groupId>org.springframework.boot</groupId>
+			      <artifactId>spring-boot-starter-logging</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>org.slf4j</groupId>
+			      <artifactId>slf4j-log4j12</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>log4j</groupId>
+			      <artifactId>log4j</artifactId>
+			   </exclusion>
+			</exclusions>
+        </dependency>
+        
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		 <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-server</artifactId>
+            <version>${hbase.version}</version>
+            <exclusions>
+			   <exclusion>
+			      <groupId>org.springframework.boot</groupId>
+			      <artifactId>spring-boot-starter-logging</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>org.slf4j</groupId>
+			      <artifactId>slf4j-log4j12</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>log4j</groupId>
+			      <artifactId>log4j</artifactId>
+			   </exclusion>
+			</exclusions>
+        </dependency>
+		<dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>${hbase.version}</version>
+       </dependency>
+       <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-common</artifactId>
+            <version>${hbase.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop.version}</version>
+            <exclusions>
+			   <exclusion>
+			      <groupId>org.springframework.boot</groupId>
+			      <artifactId>spring-boot-starter-logging</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>org.slf4j</groupId>
+			      <artifactId>slf4j-log4j12</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>log4j</groupId>
+			      <artifactId>log4j</artifactId>
+			   </exclusion>
+			</exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+            <exclusions>
+			   <exclusion>
+			      <groupId>org.springframework.boot</groupId>
+			      <artifactId>spring-boot-starter-logging</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>org.slf4j</groupId>
+			      <artifactId>slf4j-log4j12</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>log4j</groupId>
+			      <artifactId>log4j</artifactId>
+			   </exclusion>
+			</exclusions>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>${zookeeper.version}</version>
+            <type>pom</type>
+            <exclusions>
+			   <exclusion>
+			      <groupId>org.springframework.boot</groupId>
+			      <artifactId>spring-boot-starter-logging</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>org.slf4j</groupId>
+			      <artifactId>slf4j-log4j12</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>log4j</groupId>
+			      <artifactId>log4j</artifactId>
+			   </exclusion>
+			</exclusions>
+        </dependency>
+        
+        <!-- <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_${scala.binary.version}</artifactId>
+            <version>${spark.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.slf4j</groupId>
+            		<artifactId>slf4j-log4j12</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>log4j</groupId>
+            		<artifactId>log4j</artifactId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+		 <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming-kafka-0-10_${scala.binary.version}</artifactId>
+            <version>${spark.version}</version>
+        </dependency> -->
+        
+        <dependency>
+		     <groupId>org.springframework.boot</groupId>
+		     <artifactId>spring-boot-configuration-processor</artifactId>
+		     <optional>true</optional>
+		</dependency>
+		<!-- springboot 提供监听的 -->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- <dependency> 
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency> -->
+ 		
+ 		<dependency>
+		   <groupId>com.jayway.jsonpath</groupId>
+		   <artifactId>json-path</artifactId>
+		</dependency>
+		
+		<!-- <dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-cluster-tools_${scala.binary.version}</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-http_${scala.binary.version}</artifactId>
+		</dependency> -->
+		
+		<!-- SpringBoot 热启动 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.huateng.dinst</groupId>
+            <artifactId>dinst-poc-client</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <!-- <exclusions>
+                <exclusion>
+                    <artifactId>curator-recipes</artifactId>
+                    <groupId>org.apache.curator</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>curator-framework</artifactId>
+                    <groupId>org.apache.curator</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.curator</groupId>
+                    <artifactId>curator-x-discovery</artifactId>
+                </exclusion>
+            </exclusions> -->
+        </dependency>
+        
+         <dependency>
+            <groupId>org.apache.phoenix</groupId>
+            <artifactId>phoenix-core</artifactId>
+            <version>${phoenix.version}</version>
+        </dependency>
+		
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			
+			<dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>2.6.1</version>
+                <exclusions>
+			   <exclusion>
+			      <groupId>org.springframework.boot</groupId>
+			      <artifactId>spring-boot-starter-logging</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>org.slf4j</groupId>
+			      <artifactId>slf4j-log4j12</artifactId>
+			   </exclusion>
+			   <exclusion>
+			      <groupId>log4j</groupId>
+			      <artifactId>log4j</artifactId>
+			   </exclusion>
+			</exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>2.6.1</version>
+            </dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

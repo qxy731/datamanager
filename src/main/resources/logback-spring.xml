@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--debug="true" : 打印logback内部状态（默认当logback运行出错时才会打印内部状态 ），配置该属性后打印条件如下（同时满足
+1、找到配置文件 2、配置文件是一个格式正确的xml文件 也可编程实现打印内部状态，例如： LoggerContext lc = (LoggerContext)
+LoggerFactory.getILoggerFactory(); StatusPrinter.print(lc); -->
+<!-- scan="true" ： 自动扫描该配置文件，若有修改则重新加载该配置文件 -->
+<!-- scanPeriod="30 seconds" : 配置自动扫面时间间隔（单位可以是：milliseconds, seconds, minutes
+or hours，默认为：milliseconds）， 默认为1分钟，scan="true"时该配置才会生效 -->
+<!--<configuration debug="false" scan="true" scanPeriod="60 seconds" packagingData="true">-->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <property resource="logback.properties"/>
+
+    <!-- 设置 logger context 名称,一旦设置不可改变，默认为default -->
+    <contextName>dataprocess</contextName>
+
+    <appender name="dataprocess-debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <prudent>true</prudent>
+        <file>${logback.dir}/${logback.debug.filename}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logback.dir}/${logback.debug.filename}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>${logback.maxfilesize}</maxFileSize>
+            <maxHistory>${logback.maxHistory}</maxHistory>
+            <!--<totalSizeCap>${logback.totalsizecap}</totalSizeCap>-->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%msg%n</pattern>
+            <charset>${logback.charset}</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="dataprocess-info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 支持多JVM同时操作同一个日志文件 -->
+        <prudent>true</prudent>
+        <!-- 当前活动日志文件名 -->
+        <file>${logback.dir}/${logback.info.filename}.log</file>
+        <!-- 文件滚动策略根据%d{patter}中的“patter”而定，此处为每天产生一个文件 -->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            &lt;!&ndash; 归档文件名“.zip或.gz结尾”,表示归档文件自动压缩 &ndash;&gt;
+            <fileNamePattern>${logback.dir}/${logback.info.filename}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>-->
+
+        <!-- 文件滚动策略根据%d{patter}中的“patter”而定，此处为每50MB产生一个文件 保存90天 总日志大小30GB -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 归档文件名“.zip或.gz结尾”,表示归档文件自动压缩 -->
+            <!--Compression is not supported in prudent mode. Aborting-->
+            <fileNamePattern>${logback.dir}/${logback.info.filename}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>${logback.maxfilesize}</maxFileSize>
+            <maxHistory>${logback.maxhistory}</maxHistory>
+            <totalSizeCap>${logback.totalsizecap}</totalSizeCap>
+        </rollingPolicy>
+        <!-- 对日志进行格式化 -->
+        <!-- encoders are by default assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+        <!--<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+        <encoder>
+            <pattern>%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%msg%n</pattern>
+            <charset>${logback.charset}</charset>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="dataprocess-warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <prudent>true</prudent>
+        <file>${logback.dir}/${logback.warn.filename}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logback.dir}/${logback.warn.filename}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>${logback.maxfilesize}</maxFileSize>
+            <maxHistory>${logback.maxHistory}</maxHistory>
+            <!--<totalSizeCap>${logback.totalsizecap}</totalSizeCap>-->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%msg%n</pattern>
+            <charset>${logback.charset}</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="dataprocess-error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <prudent>true</prudent>
+        <file>${logback.dir}/${logback.error.filename}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logback.dir}/${logback.error.filename}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>${logback.maxfilesize}</maxFileSize>
+            <maxHistory>${logback.maxHistory}</maxHistory>
+            <!--<totalSizeCap>${logback.totalsizecap}</totalSizeCap>-->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%msg%n</pattern>
+            <charset>${logback.charset}</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%msg%n</pattern>
+            <charset>${logback.charset}</charset>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ALL</level>
+        </filter>
+    </appender>
+    
+    <!-- 日志级别若没显示定义，则继承最近的父logger（该logger需显示定义level,直到rootLogger）的日志级别-->
+    <!-- logger的appender默认具有累加性（默认日志输出到当前logger的appender和所有祖先logger的appender中），可通过配置 “additivity”属性修改默认行为-->
+
+    <!--  系统默认包 -->
+    <!--<logger name="com.myboot.uprofile" level="INFO"/>-->
+    <!--  mapper 数据库查询开发用 -->
+    <!-- <logger name="com.myboot.uprofile.mapper" level="DEBUG" /> -->
+
+    <!-- 至多只能配置一个root -->
+    <root level="${logback.level}" >
+        <appender-ref ref="dataprocess-debug"/>
+        <appender-ref ref="dataprocess-info"/>
+        <appender-ref ref="dataprocess-warn"/>
+        <appender-ref ref="dataprocess-error"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

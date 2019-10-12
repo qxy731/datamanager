@@ -1,0 +1,19 @@
+server:
+  port: 8090
+  context-path: /dataprocess
+
+
+
+#spring:
+#  cloud:
+#    zookeeper:
+#      connect-string: 122.112.198.196:2181,122.112.224.4:2181,122.112.255.137:2181
+#      enabled: true
+#  kafka:
+#    bootstrap-servers: 122.112.198.196:9092,122.112.224.4:9092,122.112.255.137:9092
+#    producer:
+#      properties:
+#        source:
+#          topic: datacenter.sfz.ins.opaincome
+#    properties:
+#      switch: 1
