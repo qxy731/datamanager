@@ -30,10 +30,19 @@ public class MyPhoenixProcessRepository {
      * @return
      * @throws IOException 
      */
-    public Connection getConnection() throws Exception {
-    	Class.forName("org.apache.phoenix.jdbc.PhoenixDriver");
-		String url = myKafkaConfiguration.getOtherParameter("jdbc.url");
-    	return DriverManager.getConnection(url);
+    public Connection getConnection() {
+    	 try {
+    		 Class.forName("org.apache.phoenix.jdbc.PhoenixDriver");
+    		 String url = myKafkaConfiguration.getOtherParameter("jdbc.url");
+    		 //log.info(url);
+    		 //String url = "jdbc:phoenix:122.112.198.196,122.112.255.137,122.112.224.4";
+    		 //String url = "jdbc:phoenix:ecs---2-0004,ecs---2-0005,ecs---2-0001";
+    		 return DriverManager.getConnection(url);
+         } catch (Exception e) {
+             log.error("[hbase]获取连接异常!!" + e.getMessage());
+             e.printStackTrace();
+         }
+    	 return null;
     }
     
 	public List<Map<String,String>> query(String sql) throws Exception {
@@ -61,9 +70,13 @@ public class MyPhoenixProcessRepository {
 		}catch(Exception e) {
 			log.error(e.getMessage());
 		}finally {
-			stmt.close();
-			rs.close();
-			conn.close();
+			try {
+				stmt.close();
+				rs.close();
+				conn.close();
+			}catch(Exception e) {
+				//e.printStackTrace();
+			}
 		}
 		return list;
 	}
@@ -94,13 +107,18 @@ public class MyPhoenixProcessRepository {
 			sb.append("(").append(columns).append(")");
 			sb.append(" values (").append(values).append(")");
 			//"upsert into tab(col1,col2) values(1,'test1')"
+			log.info("insert into phoenix table sql:"+sb.toString());
 			stmt = conn.prepareStatement(sb.toString());
 			stmt.execute();
 		}catch(Exception e) {
 			log.error(e.getMessage());
 		}finally {
-			stmt.close();
-			conn.close();
+			try {
+				stmt.close();
+				conn.close();
+			}catch(Exception e) {
+				//e.printStackTrace();
+			}
 		}
 	}
 

@@ -95,7 +95,7 @@ public class MyKafkaConsumerServiceImpl  implements MyKafkaConsumerService {
      * 向akka传送数据
      * @throws Exception 
      */
-    private void processAkka(String rowkey,Map<String, Object> mapMessage) {
+    public void processAkka(String rowkey,Map<String, Object> mapMessage) {
     	try {
 	    	long sendAkkaStart = System.currentTimeMillis();
 	        String akkaApi = myKafkaConfiguration.getOtherParameter("akka_api");
@@ -124,7 +124,7 @@ public class MyKafkaConsumerServiceImpl  implements MyKafkaConsumerService {
      * 向phoenix保存数据
      * @throws Exception 
      */
-    private void processPhoenix(String rowkey,Map<String, Object> mapMessage) {
+    public void processPhoenix(String rowkey,Map<String, Object> mapMessage) {
     	try {
     	long sendPhoenixStart = System.currentTimeMillis();
     	Map<String,String> map = new LinkedHashMap<String,String>();
