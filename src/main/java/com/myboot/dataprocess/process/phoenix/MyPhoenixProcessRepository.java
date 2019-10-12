@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +35,6 @@ public class MyPhoenixProcessRepository {
     	 try {
     		 Class.forName("org.apache.phoenix.jdbc.PhoenixDriver");
     		 String url = myKafkaConfiguration.getOtherParameter("jdbc.url");
-    		 //log.info(url);
-    		 //String url = "jdbc:phoenix:122.112.198.196,122.112.255.137,122.112.224.4";
-    		 //String url = "jdbc:phoenix:ecs---2-0004,ecs---2-0005,ecs---2-0001";
     		 return DriverManager.getConnection(url);
          } catch (Exception e) {
              log.error("[hbase]获取连接异常!!" + e.getMessage());
@@ -51,20 +49,19 @@ public class MyPhoenixProcessRepository {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			stmt = conn.prepareStatement(sql);
+			stmt = conn.prepareStatement(sql.toLowerCase());
 		    rs = stmt.executeQuery();
 		    if(rs != null) {
-		    	Map<String,String> map = null;
 		    	ResultSetMetaData meta = rs.getMetaData();
 		    	int length = meta.getColumnCount();
 		    	while(rs.next()) {
-		    		map = new LinkedHashMap<String,String>();
-		    		for(int i=0; i<length;i++) {
-		    			String column = meta.getColumnName(i);
+		    		Map<String,String> map = new LinkedHashMap<String,String>();
+		    		for(int i=1; i<length;i++) {
+		    			String column = meta.getColumnLabel(i);
 		    			String value = rs.getString(i);
 		    			map.put(column,value);
-		    			list.add(map);
 		    		}
+		    		list.add(map);
 		    	}
 		    }
 		}catch(Exception e) {
@@ -75,7 +72,6 @@ public class MyPhoenixProcessRepository {
 				rs.close();
 				conn.close();
 			}catch(Exception e) {
-				//e.printStackTrace();
 			}
 		}
 		return list;
@@ -98,7 +94,9 @@ public class MyPhoenixProcessRepository {
 				String key = entry.getKey();
 				String value = entry.getValue();
 				columns.append(key);
+				values.append("'");
 				values.append(value);
+				values.append("'");
 				if(count<size) {
 					columns.append(",");
 					values.append(",");
@@ -124,7 +122,15 @@ public class MyPhoenixProcessRepository {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
+		MyPhoenixProcessRepository p = new MyPhoenixProcessRepository();
+		try {
+			List<Map<String,String>> query = p.query("select * from \"hbs_trans_log_act\" limit 2");
+			System.out.println(query.size());
+			System.out.println(query.get(0).toString());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
