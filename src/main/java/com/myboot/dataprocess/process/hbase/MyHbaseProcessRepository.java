@@ -23,6 +23,7 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.filter.PageFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -335,5 +336,37 @@ public class MyHbaseProcessRepository {
 		log.info("---------------查询 END-----------------");
 		return list;
 	}
+	
+	/**
+	 * 分页遍历数据
+	 * @param tableName 表名
+	 * @param startRowKey 起始rowkey
+	 * @param pageSize 每页条数
+	 * @throws IOException
+	 */
+	public List<Map<String,Object>> scanByPageSize(String tableName,String startRowKey,int pageSize) throws IOException{
+		log.info("---------------查询 START-----------------");
+		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+		//根据rowkey查询
+		Table table =connection.getTable(TableName.valueOf(tableName));
+		Scan scan = new Scan();
+		//设置取值范围
+		if (StringUtils.isNotEmpty(startRowKey)) {
+			scan.setStartRow(Bytes.toBytes(startRowKey));//开始的key
+		}
+		PageFilter pageFilter = new PageFilter(pageSize);
+		scan.setFilter(pageFilter);
+        ResultScanner scanner = table.getScanner(scan) ;
+        for (Result rs : scanner) {
+        	Map<String,Object> map = new LinkedHashMap<String,Object>();
+            for (Cell cell : rs.listCells()) {
+            	map.put(new String(CellUtil.cloneQualifier(cell)), new String(CellUtil.cloneValue(cell)));
+            }
+            list.add(map);
+        }
+		log.info("---------------查询 END-----------------");
+		return list;
+	}
+
 	
 }

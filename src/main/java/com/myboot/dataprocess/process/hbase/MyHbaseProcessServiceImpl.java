@@ -260,14 +260,19 @@ public class MyHbaseProcessServiceImpl implements MyHbaseProcessService {
 			//列簇名称
 			String columnFamily = myHbaseConfiguration.getOtherParameter("columnfamily");
 			List<Map<String,Object>> list = hbaseRepository.selectAll(tableName,columnFamily);
+			//List<Map<String,Object>> list = hbaseRepository.selectByColumns(tableName, params, startRowKey, pageSize);
+			int count = 0;
 			if(list != null) {
-				AkkaProcess akkaProcess = AkkaProcess.getInstance();
+				//AkkaProcess akkaProcess = AkkaProcess.getInstance();
 				for(int i=0;i<list.size();i++) {
+					count++;
 					Map<String,Object> mapMessage = (Map<String,Object>)list.get(i);
 					String rowkey = mapMessage.get("ApplicationNumber")==null?"ApplicationNumber":mapMessage.get("ApplicationNumber").toString();
 					String akkaApi = myKafkaConfiguration.getOtherParameter("akka_api");
-					akkaProcess.getResultsFormEvalResultDto(mapMessage, akkaApi, rowkey);
+					//akkaProcess.getResultsFormEvalResultDto(mapMessage, akkaApi, rowkey);
+					log.info("历史数据预处理第"+count+"条："+mapMessage);
 				}
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

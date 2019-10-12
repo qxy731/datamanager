@@ -22,14 +22,14 @@ public class HbaseProcessServiceImplTest {
 		int total = 200;
 		String startDate = "2019-04-01";
 		String endDate = "2019-10-08";
-		service.save(total, startDate, endDate);
+		//service.save(total, startDate, endDate);
 		//service.other();//第一步先测试通不通
 		//System.out.println("--------------测试----------");
 	}
 	
 	@Test
-    public void testSelect() throws Exception {
-		//service.select("hbs_trans_log_act", "201910061000995");
+    public void testSelectAll() throws Exception {
+		service.process();
 		//service.other();//第一步先测试通不通
 		//System.out.println("--------------测试----------");
 	}
