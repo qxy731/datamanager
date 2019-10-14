@@ -1,5 +1,6 @@
 package com.myboot.dataprocess.process.phoenix;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class MyPhoenixProcessController {
 	@Autowired
 	private MyPhoenixProcessService service;
 	
-	@ApiOperation(value="sql查询", notes="sql查询")
+	@ApiOperation(value="sql查询phoenix数据", notes="sql查询phoenix数据")
 	@RequestMapping(value = "/query", method = {RequestMethod.POST,RequestMethod.GET})
 	public StatusInfo<List<Map<String, String>>> query(@RequestBody Map<String,String> jsonStr) {
 		StatusInfo<List<Map<String, String>>> spi = null;
@@ -41,6 +42,35 @@ public class MyPhoenixProcessController {
     		String sql = jsonStr.get("sql")==null?"":jsonStr.get("sql").toString();
     		List<Map<String, String>> list = service.query(sql);
 			spi = new StatusInfo<List<Map<String, String>>>(list);
+    	}catch(Exception e) {
+			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
+			log.info(ErrorMessage.msg_opt_fail.getMsg());
+		}
+    	return spi;
+	}
+	
+	@ApiOperation(value="保存", notes="保存")
+	@RequestMapping(value = "/saveByColumn", method = {RequestMethod.POST,RequestMethod.GET})
+	public StatusInfo<String> saveByColumn(@RequestBody Map<String,String> jsonStr) {
+		StatusInfo<String> spi = null;
+    	try {
+    		service.save(jsonStr);
+			spi = new StatusInfo<>();
+    	}catch(Exception e) {
+			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
+			log.info(ErrorMessage.msg_opt_fail.getMsg());
+		}
+    	return spi;
+	}
+	
+	@ApiOperation(value="保存SQL", notes="保存SQL")
+	@RequestMapping(value = "/saveBySql", method = {RequestMethod.POST,RequestMethod.GET})
+	public StatusInfo<String> saveBySql(@RequestBody Map<String,LinkedList<String>> jsonStr) {
+		StatusInfo<String> spi = null;
+    	try {
+    		List<String> sqls = jsonStr.get("sql")==null?new LinkedList<String>():(LinkedList<String>)jsonStr.get("sql");
+    		service.save(sqls);
+			spi = new StatusInfo<>();
     	}catch(Exception e) {
 			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
 			log.info(ErrorMessage.msg_opt_fail.getMsg());

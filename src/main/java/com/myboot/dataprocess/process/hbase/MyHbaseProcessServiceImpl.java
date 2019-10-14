@@ -259,7 +259,7 @@ public class MyHbaseProcessServiceImpl implements MyHbaseProcessService {
 			//列簇名称
 			String columnFamily = myHbaseConfiguration.getOtherParameter("columnfamily");
 			List<Map<String,Object>> list = hbaseRepository.selectAll(tableName,columnFamily);
-			//List<Map<String,Object>> list = hbaseRepository.selectByColumns(tableName, params, startRowKey, pageSize);
+			//List<Map<String,Object>> list = hbaseRepository.selectByColumns(tableName, startRowKey, pageSize);
 			int count = 0;
 			if(list != null) {
 				//AkkaProcess akkaProcess = AkkaProcess.getInstance();
