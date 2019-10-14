@@ -1,9 +1,16 @@
 package com.myboot.dataprocess.process.hbase;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
+import lombok.extern.slf4j.Slf4j;
+
+import org.apache.hadoop.hbase.client.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +18,6 @@ import com.myboot.dataprocess.process.hbase.common.HbaseDataModelProcess;
 import com.myboot.dataprocess.process.hbase.common.MyHbaseConfiguration;
 import com.myboot.dataprocess.process.httpclient.MyHttpClientProcess;
 import com.myboot.dataprocess.tools.CommonTool;
-
-import lombok.extern.slf4j.Slf4j;
 
 /** 
 *
@@ -251,25 +256,38 @@ public class MyHbaseProcessServiceImpl implements MyHbaseProcessService {
 		log.info("===================================================== method is end ===================================================== ");
 	}
 
+	public <K, V> Entry<K, V> getTailByReflection(LinkedHashMap<K, V> map)
+	        throws NoSuchFieldException, IllegalAccessException {
+	    Field tail = map.getClass().getDeclaredField("tail");
+	    tail.setAccessible(true);
+	    return (Entry<K, V>) tail.get(map);
+	}
+	
 	@Override
 	public void process() throws Exception {
 		String tableName = myHbaseConfiguration.getOtherParameter("tablename");
+		String batchstr = myHbaseConfiguration.getOtherParameter("scan.batch");
+		int batch = Integer.valueOf(batchstr);
 		try {
 			hbaseRepository.getConnection();
 			//列簇名称
 			String columnFamily = myHbaseConfiguration.getOtherParameter("columnfamily");
-			List<Map<String,Object>> list = hbaseRepository.selectAll(tableName,columnFamily);
-			//List<Map<String,Object>> list = hbaseRepository.selectByColumns(tableName, startRowKey, pageSize);
 			int count = 0;
-			if(list != null) {
-				//AkkaProcess akkaProcess = AkkaProcess.getInstance();
-				for(int i=0;i<list.size();i++) {
-					count++;
-					Map<String,Object> mapMessage = (Map<String,Object>)list.get(i);
-					//String rowkey = mapMessage.get("ApplicationNumber")==null?"ApplicationNumber":mapMessage.get("ApplicationNumber").toString();
-					//akkaProcess.getResultsFormEvalResultDto(mapMessage, akkaApi, rowkey);
-					MyHttpClientProcess.post(mapMessage);
-					log.info("历史数据预处理第"+count+"条："+mapMessage);
+			String startRowKey = null;
+			//第一次获取数据
+			LinkedHashMap<String,LinkedHashMap<String,Object>> scanByPageSizeAll = hbaseRepository.scanByPageSizeAll(tableName, columnFamily,"", batch);
+			while(scanByPageSizeAll.size()>0){
+			for(Map.Entry<String, LinkedHashMap<String, Object>> entry:scanByPageSizeAll.entrySet()){
+					System.out.println("rowkey" + entry.getKey());
+                    LinkedHashMap<String, Object> value = entry.getValue();
+				    MyHttpClientProcess.post(value);
+				    count++;
+				    log.info("历史数据预处理第"+count+"条："+value);
+				}
+				//继续获取数据
+				if(scanByPageSizeAll.size() > 0){
+					startRowKey = getTailByReflection(scanByPageSizeAll).getKey() + 0;
+				    scanByPageSizeAll = hbaseRepository.scanByPageSizeAll(tableName, columnFamily,startRowKey, batch);
 				}
 			}
 		} catch (Exception e) {
@@ -285,5 +303,4 @@ public class MyHbaseProcessServiceImpl implements MyHbaseProcessService {
 			}
 		}
 	}
-	
 }

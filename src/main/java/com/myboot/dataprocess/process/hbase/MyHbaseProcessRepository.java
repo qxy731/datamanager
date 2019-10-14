@@ -247,7 +247,7 @@ public class MyHbaseProcessRepository {
 				   f.setAccessible(true);
 				   //得到对应字段的属性名，
 				   String column = f.getName();
-				   //column = column.substring(0, 1).toUpperCase()+column.substring(1);
+				   column = column.substring(0, 1).toUpperCase()+column.substring(1);
 				   //得到对应字段属性值
 				   String columnText = (String)f.get(object);
 				   //得到对应字段的类型
@@ -366,6 +366,53 @@ public class MyHbaseProcessRepository {
         }
 		log.info("---------------查询 END-----------------");
 		return list;
+	}
+
+	
+	 /**
+     * 把ResultScanner结果装换放入hashmap中
+     */
+    public static LinkedHashMap<String, LinkedHashMap<String, Object>> getResultFromScanner(ResultScanner resultScan) {
+        LinkedHashMap<String, LinkedHashMap<String, Object>> resultMap = new LinkedHashMap<>();
+
+        for (Result result : resultScan) {
+            String rowKey = Bytes.toString(result.getRow());
+            LinkedHashMap<String, Object> subResultMap = new LinkedHashMap<>();
+
+            for (Cell cell : result.rawCells()) {
+                String cn = Bytes.toString(CellUtil.cloneQualifier(cell));
+                String value = Bytes.toString(CellUtil.cloneValue(cell));
+                subResultMap.put(cn, value);
+            }
+            resultMap.put(rowKey, subResultMap);
+        }
+        return resultMap;
+    }
+	
+	/**
+	 * 分页遍历数据
+	 * @param tableName 表名
+	 * @param startRowKey 起始rowkey
+	 * @param pageSize 每页条数
+	 * @throws IOException
+	 */
+	public LinkedHashMap<String, LinkedHashMap<String, Object>> scanByPageSizeAll(String tableName,String columnFamily,String startRowKey,int pageSize) throws IOException{
+		log.info("---------------查询 START-----------------");
+		LinkedHashMap<String, LinkedHashMap<String, Object>> resultFromScanner = new LinkedHashMap<String, LinkedHashMap<String,Object>>();
+		//根据rowkey查询
+		Table table = connection.getTable(TableName.valueOf(tableName));
+		Scan scan = new Scan();
+		scan.addFamily(Bytes.toBytes(columnFamily));
+		//设置取值范围
+		if (StringUtils.isNotEmpty(startRowKey)) {
+			scan.setStartRow(Bytes.toBytes(startRowKey));//开始的key
+		}
+		PageFilter pageFilter = new PageFilter(pageSize);
+		scan.setFilter(pageFilter);
+        ResultScanner scanner = table.getScanner(scan) ;
+        resultFromScanner = getResultFromScanner(scanner);
+		log.info("---------------查询 END-----------------");
+		return resultFromScanner;
 	}
 
 	
