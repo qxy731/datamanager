@@ -29,16 +29,32 @@ public class MyKafkaProducerServiceImpl implements MyKafkaProducerService {
     @Autowired
     private KafkaDataModelProcess kafkaDataModelProcess;
     
-    public void sendMessage(String topic, int count,String currentDate) {
+    /**
+     * 发送造数数据
+     */
+    public void sendAssembleMessage(String topic, int count,String currentDate) {
         for(int i=0;i<count;i++) {
         	KafkaApplyCardEntity entity = kafkaDataModelProcess.assembleKafkaData(currentDate);
         	Gson gson = new Gson();
         	String jsonStr = gson.toJson(entity);
-        	//log.info(jsonStr);
+        	log.info("send assemble data message :" + jsonStr);
             kafkaTemplate.send(topic,jsonStr);
         }
     }
     
+    /**
+     * 发送历史库表数据
+     */
+    public void sendHisMessage(String topic, Map<String, Object> entity) {
+    	Gson gson = new Gson();
+    	String jsonStr = gson.toJson(entity);
+    	log.info("send his data message :" + jsonStr);
+        kafkaTemplate.send(topic,jsonStr);
+    }
+    
+    /**
+     * 发送衍生变量计算结果数据
+     */
     public void sendResultMessage(String topic,Map<String, Object> entity) {
     	Gson gson = new Gson();
     	String jsonStr = gson.toJson(entity);

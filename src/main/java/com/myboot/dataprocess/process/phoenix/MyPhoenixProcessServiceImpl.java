@@ -1,5 +1,7 @@
 package com.myboot.dataprocess.process.phoenix;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,18 +24,26 @@ public class MyPhoenixProcessServiceImpl implements MyPhoenixProcessService{
 	
 	private static final int COMMIT_SIZE = 1000;
 	
-	ExecutorService E1 = Executors.newSingleThreadExecutor();
+	private ExecutorService E1 = Executors.newSingleThreadExecutor();
 	
-	ScheduledExecutorService E2 = Executors.newScheduledThreadPool(1);
+	private ScheduledExecutorService E2 = Executors.newScheduledThreadPool(1);
 	
-	static List<String> sqls = new LinkedList<String>();
+	List<String> sqls = new LinkedList<String>();
+	
+	int cnt = 0;
+	
+	{
+	    E2.scheduleWithFixedDelay(() -> {
+	    	processPhoenix(null,1);
+	    }, 5L, 3L, TimeUnit.SECONDS);
+	}
 	
 	@Autowired
 	private MyPhoenixProcessRepository repository;
 	
 	@Autowired
 	private MyKafkaConfiguration myKafkaConfiguration;
-
+	
 	@Override
 	public List<Map<String, String>> query(String sql) throws Exception {
 		return repository.query(sql);
@@ -49,41 +59,46 @@ public class MyPhoenixProcessServiceImpl implements MyPhoenixProcessService{
 		repository.saveBySql(sqls);
 	}
 	
-	
     /**
      * 
      * 向phoenix保存数据
      * @throws Exception 
      */
 	@Override
-	public void processPhoenix(Map<String, Object> mapMessage) {
+	public void processPhoenix(Map<String, Object> mapMessage,int type) {
 		E1.execute(() -> {
 			try {
-				if(mapMessage != null) {
-					processPhoenixImpl(mapMessage);
-				}
+				if (type == 0) {
+			        if (++cnt < COMMIT_SIZE) {
+			        	processPhoenixImpl(mapMessage);
+			        	return;
+			        }
+			      }
+			      if (sqls.size() == 0) {
+			    	  return;
+			      }
+			      try(Connection conn = repository.getConnection()) {
+						conn.setAutoCommit(false);
+						for(String sql : sqls) {
+							try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+							    stmt.executeUpdate();
+							}catch(Exception e) {
+								
+							}
+						}
+						conn.commit();
+			      } catch (Exception e) {
+			    	  
+			      } finally {
+			        cnt = 0;
+			        sqls.clear();
+			      }
 			}catch(Exception e) {
-	    		log.error(" send source message to phoenix is fail...");
+	    		log.error("send source message to phoenix is fail...");
 	    		log.error(e.getMessage());
 	    	}
     	});
 	}
-	
-	public void processPhoenix() {
-		E1.execute(() -> {
-			try {
-				if(sqls.size() == 0) {
-					return;
-				}
-				repository.saveBySql(sqls);
-			}catch(Exception e) {
-	    		log.error(" send source message to phoenix is fail...");
-	    		log.error(e.getMessage());
-	    	}
-    	});
-	}
-	
-	
 	
 	private void processPhoenixImpl(Map<String, Object> mapMessage) {
 		StringBuffer sb = new StringBuffer("upsert into ");
@@ -112,17 +127,8 @@ public class MyPhoenixProcessServiceImpl implements MyPhoenixProcessService{
 			log.info("upsert into phoenix table sql:"+sb.toString());
 			if(sqls.size()<COMMIT_SIZE) {
 				sqls.add(sb.toString());
-			}else {
-				repository.saveBySql(sqls);
 			}
 		}
 	}
 	
-	
-	{
-	    E2.scheduleWithFixedDelay(() -> {
-	      processPhoenix();
-	    }, 5L, 3L, TimeUnit.SECONDS);
-	}
-
 }

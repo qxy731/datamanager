@@ -26,7 +26,7 @@ public class MyKafkaProducerServiceImplTest {
 		int count = 100;
 		String currentDate = "2019-10-08";
 		String topic = myKafkaConfiguration.getOtherParameter("topic");
-		service.sendMessage(topic, count, currentDate);
+		service.sendAssembleMessage(topic, count, currentDate);
 	}
 	
 

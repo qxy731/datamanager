@@ -136,18 +136,10 @@ public class MyPhoenixProcessRepository {
 			sqls.clear();
 		}
 	}
-
+	
+	
 	public static void main(String[] args) {
-		/*// TODO Auto-generated method stub
-		MyPhoenixProcessRepository p = new MyPhoenixProcessRepository();
-		try {
-			List<Map<String,String>> query = p.query("select * from \"hbs_trans_log_act\" limit 2");
-			System.out.println(query.size());
-			System.out.println(query.get(0).toString());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+		
 	}
 
 }

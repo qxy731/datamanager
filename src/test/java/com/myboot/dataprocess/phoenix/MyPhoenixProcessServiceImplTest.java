@@ -29,7 +29,7 @@ public class MyPhoenixProcessServiceImplTest {
 		Map<String, Object> mapMessage = new LinkedHashMap<String,Object>();
 		mapMessage.put("ApplicationNumber", rowkey);
 		mapMessage.put("AlarmCode", "H");
-		service.processPhoenix(mapMessage);
+		service.processPhoenix(mapMessage,0);
 	}
 	
 

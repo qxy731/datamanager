@@ -57,9 +57,4 @@ public interface MyHbaseProcessService {
 	 */
 	public void select(String tableName,Map<String,Object> params) throws Exception;
 	
-	public void process() throws Exception;
-	
-	public void other() throws Exception;
-	
-
 }

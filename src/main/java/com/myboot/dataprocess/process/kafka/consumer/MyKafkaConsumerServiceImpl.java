@@ -45,10 +45,11 @@ public class MyKafkaConsumerServiceImpl  implements MyKafkaConsumerService {
 				/**第一步：向akka传送数据并回写Kafka*/
 				akkaService.processAkka(mapMessage);
 				/**第二步：向phoenix保存数据*/
-				phoenixService.processPhoenix(mapMessage);
-				long end = System.currentTimeMillis();
-				long mins = start - end;
-				log.info("kafka consumer total cost :" + mins +"ms");
+				String myDataType = mapMessage.get("MyDataType")==null?"2":mapMessage.get("MyDataType").toString();
+				if("2".equals(myDataType)) {
+					phoenixService.processPhoenix(mapMessage,0);
+				}
+				log.info("kafka consumer total cost :" + (System.currentTimeMillis() - start) +"ms");
 			}
 		}catch(Exception e) {
 			log.error(e.getMessage());

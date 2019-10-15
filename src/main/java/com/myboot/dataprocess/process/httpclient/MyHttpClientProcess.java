@@ -19,13 +19,18 @@ import org.apache.http.util.EntityUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.myboot.dataprocess.tools.CommonTool;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MyHttpClientProcess {
 	
+	/**
+	 * 
+	 * @param map kafka实时进件对象数据
+	 * @param myDataFlag 1-历史hbase,2-实时kafka
+	 * @return
+	 */
 	public static String post(Map<String,Object> map) {
 		// 获得Http客户端(可以理解为:你得先有一个浏览器;注意:实际上HttpClient与浏览器是不一样的)
 		CloseableHttpClient httpClient = HttpClientUtil.getHttpClient();
@@ -41,11 +46,8 @@ public class MyHttpClientProcess {
 			      .setConnectionRequestTimeout(2000)
 			      .build();
 		httpPost.setConfig(requestConfig);
-		String reqNo = UUID.randomUUID().toString();
-		newMap.put("reqNo",reqNo);
-		String applicationDate = map.get("ApplicationDate")==null?CommonTool.getCurrentDate():map.get("ApplicationDate").toString();
-		newMap.put("FLAT_TRAD_DATE_TIME", applicationDate + " 00:00:00");
-		String jsonString = gson.toJson(map);
+		newMap.put("reqNo",UUID.randomUUID().toString());
+		String jsonString = gson.toJson(newMap);
 		StringEntity entity = new StringEntity(jsonString, "UTF-8");
 		// post请求是将参数放在请求体里面传过去的;这里将entity放入post请求体中
 		httpPost.setEntity(entity);

@@ -1,23 +1,16 @@
 package com.myboot.dataprocess.process.hbase;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
-import lombok.extern.slf4j.Slf4j;
-
-import org.apache.hadoop.hbase.client.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.myboot.dataprocess.process.hbase.common.HbaseDataModelProcess;
 import com.myboot.dataprocess.process.hbase.common.MyHbaseConfiguration;
-import com.myboot.dataprocess.process.httpclient.MyHttpClientProcess;
 import com.myboot.dataprocess.tools.CommonTool;
+
+import lombok.extern.slf4j.Slf4j;
 
 /** 
 *
@@ -26,8 +19,8 @@ import com.myboot.dataprocess.tools.CommonTool;
 * @author ：PeterQi
 *
 */
-@Service
 @Slf4j
+@Service
 public class MyHbaseProcessServiceImpl implements MyHbaseProcessService {
 	
 	@Autowired
@@ -219,88 +212,9 @@ public class MyHbaseProcessServiceImpl implements MyHbaseProcessService {
 		log.info("===================================================== method is end ===================================================== ");
 	}
 	
-	/**
-	 * 测试
-	 */
-	public void other() throws Exception {
-		log.info("===================================================== method is start ===================================================== ");
-		try {
-			hbaseRepository.getConnection();
-			//空间名称
-			String namespace = myHbaseConfiguration.getOtherParameter("namespace");
-			log.info("===================="+namespace+"====================");
-			//数据表表名
-			String tableName =  myHbaseConfiguration.getOtherParameter("tablename");
-			log.info("===================="+tableName+"====================");
-			//列簇名称
-			String columnFamily = myHbaseConfiguration.getOtherParameter("columnfamily");
-			log.info("===================="+columnFamily+"====================");
-			hbaseRepository.create(namespace, tableName, columnFamily);
-			String rowkey = "1234567890";
-			String cloumn= "testcloumn";
-			String columnText = "这是测试列字符";
-			hbaseRepository.insert(tableName, rowkey, columnFamily, cloumn, columnText);
-			hbaseRepository.select(tableName, rowkey);
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error(e.getMessage());
-		}finally {
-			if(null != hbaseRepository) {
-				try {
-					hbaseRepository.closeConnection();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		log.info("===================================================== method is end ===================================================== ");
-	}
 
-	public <K, V> Entry<K, V> getTailByReflection(LinkedHashMap<K, V> map)
-	        throws NoSuchFieldException, IllegalAccessException {
-	    Field tail = map.getClass().getDeclaredField("tail");
-	    tail.setAccessible(true);
-	    return (Entry<K, V>) tail.get(map);
+	public static void main(String[] args) {
+		
 	}
 	
-	@Override
-	public void process() throws Exception {
-		String tableName = myHbaseConfiguration.getOtherParameter("tablename");
-		String batchstr = myHbaseConfiguration.getOtherParameter("scan.batch");
-		int batch = Integer.valueOf(batchstr);
-		try {
-			hbaseRepository.getConnection();
-			//列簇名称
-			String columnFamily = myHbaseConfiguration.getOtherParameter("columnfamily");
-			int count = 0;
-			String startRowKey = null;
-			//第一次获取数据
-			LinkedHashMap<String,LinkedHashMap<String,Object>> scanByPageSizeAll = hbaseRepository.scanByPageSizeAll(tableName, columnFamily,"", batch);
-			while(scanByPageSizeAll.size()>0){
-			for(Map.Entry<String, LinkedHashMap<String, Object>> entry:scanByPageSizeAll.entrySet()){
-					System.out.println("rowkey" + entry.getKey());
-                    LinkedHashMap<String, Object> value = entry.getValue();
-				    MyHttpClientProcess.post(value);
-				    count++;
-				    log.info("历史数据预处理第"+count+"条："+value);
-				}
-				//继续获取数据
-				if(scanByPageSizeAll.size() > 0){
-					startRowKey = getTailByReflection(scanByPageSizeAll).getKey() + 0;
-				    scanByPageSizeAll = hbaseRepository.scanByPageSizeAll(tableName, columnFamily,startRowKey, batch);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error(e.getMessage());
-		}finally {
-			if(null != hbaseRepository) {
-				try {
-					hbaseRepository.closeConnection();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
 }

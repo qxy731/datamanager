@@ -2,8 +2,6 @@ package com.myboot.dataprocess.process.hbase;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,20 +42,6 @@ public class MyHbaseProcessController {
     		int total = map.get("total")==null?0:Integer.valueOf(map.get("total").toString());
     		/**直接put到hbase**/
 			service.save(total,startDate,endDate);
-			spi = new StatusInfo<String>();
-    	}catch(Exception e) {
-			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
-			log.info(ErrorMessage.msg_opt_fail.getMsg());
-		}
-    	return spi ;
-	}
-	
-	@ApiOperation(value="HBase历史数据预处理", notes="HBase历史数据预处理")
-	@RequestMapping(value = "/process", method = {RequestMethod.POST,RequestMethod.GET})
-	public StatusInfo<String> process(HttpServletRequest request) {
-		StatusInfo<String> spi = null;
-    	try {
-			service.process();
 			spi = new StatusInfo<String>();
     	}catch(Exception e) {
 			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
