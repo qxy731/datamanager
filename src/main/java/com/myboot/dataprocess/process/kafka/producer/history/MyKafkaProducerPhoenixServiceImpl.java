@@ -87,7 +87,7 @@ public class MyKafkaProducerPhoenixServiceImpl implements MyKafkaProducerHistory
 		          log.info("================"+(System.currentTimeMillis() - start) + ": " + total + "================");
 			}
 		}catch(Exception e) {
-			log.info("readTableData throw excepton ...");
+			log.info("sendHisMessage throw excepton ...");
 			log.error(e.getMessage());
 		}finally {
 			

@@ -3,10 +3,14 @@ package com.myboot.dataprocess.builder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.google.gson.Gson;
 import com.myboot.dataprocess.builder.enums.AlarmCode;
 import com.myboot.dataprocess.builder.enums.ApprovalResult;
 import com.myboot.dataprocess.builder.enums.ResearchConclusion;
 import com.myboot.dataprocess.builder.enums.Sex;
+import com.myboot.dataprocess.model.KafkaApplyCardEntity;
+import com.myboot.dataprocess.model.ProtocolEntity;
+import com.myboot.dataprocess.model.SchemaEntity;
 import com.myboot.dataprocess.tools.CommonTool;
 
 public class RandomDataModelBuilder {
@@ -115,115 +119,169 @@ public class RandomDataModelBuilder {
 	    return map;
 	}
 	
-	/*private String[] str = {"SalesCode:5556","ResearchConclusion:{'K','F'}","ApprovalResult:通过",
-			"SourceCode:{8,P}","AlarmCode:('H','S')",""
-			};*/
-	
-	/*public static ApplyCardEntity getSpecialDataModel(long sequence,String currentDate) {
-		ApplyCardEntity entity = new ApplyCardEntity();
+	public static KafkaApplyCardEntity processHisKafkaData(Map<String,Object> map) {
+		KafkaApplyCardEntity apply  = new KafkaApplyCardEntity();
+		ProtocolEntity protocol = new ProtocolEntity();
+		protocol.setType("protocol.type");
+		protocol.setVersion("protocol.version");
+		SchemaEntity schema = new SchemaEntity();
+		schema.setNamespace("source.topic");
+		schema.setTableName("phoenix_table_name");
+		apply.setProtocol(protocol);
+		apply.setSchema(schema);
+		apply.setTimestamp(System.currentTimeMillis());
+		//Map<String,Object> retMap = new LinkedHashMap<String,Object>();
 		//申请编号
-	    entity.setApplicationNumber(currentDate.replaceAll("-", "")+sequence);
+	    map.put("ApplicationNumber",map.get("APPLICATIONNUMBER")==null?"":map.get("APPLICATIONNUMBER").toString());
+	    map.remove("APPLICATIONNUMBER");
 	    //获取数据日期	Date
-	    entity.setCaptureDate(CommonTool.getCurrentDate());
+	    map.put("CaptureDate",map.get("CAPTUREDATE")==null?"":map.get("CAPTUREDATE").toString());
+	    map.remove("CAPTUREDATE");
 	    //获取数据时间	Numeric
-	    entity.setCaptureTime(CommonTool.getCurrentTime());
+	    map.put("CaptureTime",map.get("CAPTURETIME")==null?"":map.get("CAPTURETIME").toString());
+	    map.remove("CAPTURETIME");
 	    //中止日期	Date
-	    entity.setExpiryDate(CommonTool.getCurrentDate());
+	    map.put("ExpiryDate",map.get("EXPIRYDATE")==null?"":map.get("EXPIRYDATE").toString());
+	    map.remove("ExpiryDate");
 	    //申请日	Date
-	    entity.setApplicationDate(currentDate);
+	    map.put("ApplicationDate",map.get("APPLICATIONDATE")==null?"":map.get("APPLICATIONDATE").toString());
+	    map.remove("APPLICATIONDATE");
 	    //申请类型 Text
-	    entity.setApplicationType("CARD");
+	    map.put("ApplicationType",map.get("APPLICATIONTYPE")==null?"":map.get("APPLICATIONTYPE").toString());
+	    map.remove("APPLICATIONTYPE");
 	    //信用额度	Numeric
-	    entity.setAmount(RandomNumberBuilder.getRangeRandom2Str(3000,100000));
+	    map.put("Amount",map.get("AMOUNT")==null?"":map.get("AMOUNT").toString());
+	    map.remove("AMOUNT");
 	    //分行号	Text
-	    entity.setBranch(RandomNumberBuilder.getRangeRandom2Str(10,100));
+	    map.put("Branch",map.get("BRANCH")==null?"":map.get("BRANCH").toString());
+	    map.remove("BRANCH");
 	    //处理结果	Text
-	    String decision = RandomNumberBuilder.getRangeRandom2Str(1,4);
-	    entity.setDecision(decision);
+	    map.put("Decision",map.get("DECISION")==null?"":map.get("DECISION").toString());
+	    map.remove("DECISION");
 	    //处理原因	Text
-	    if("3".equals(decision)) {
-	    	entity.setDecisionReason(RandomCharacterBuilder.getRandomStr(10));
-	    }else {
-	    	entity.setDecisionReason("");
-	    }
+	    map.put("DecisionReason",map.get("DECISIONREASON")==null?"":map.get("DECISIONREASON").toString());
+	    map.remove("DECISIONREASON");
 	    //处理日期	Date
-	    if("3".equals(decision)) {
-	    	 entity.setDecisionDate(CommonTool.addDay(currentDate,RandomNumberBuilder.getRangeRandom2Int(1,4)));
-	    }else {
-	    	entity.setDecisionDate("");
-	    }
+	    map.put("DecisionDate",map.get("DECISIONDATE")==null?"":map.get("DECISIONDATE").toString());
+	    map.remove("DecisionDate");
 	    //Id Num 证件号码	Text
-	    String certNo = RandomCertNoBuilder.getRandomCertNo();
-	    entity.setCertificateID(certNo);
+	    map.put("CertificateID",map.get("CERTIFICATEID")==null?"":map.get("CERTIFICATEID").toString());
+	    map.remove("CERTIFICATEID");
 	    //Id Type 证件种类	Text
-	    entity.setCertificateType("10");
+	    map.put("CertificateType",map.get("CERTIFICATETYPE")==null?"":map.get("CERTIFICATETYPE").toString());
+	    map.remove("CERTIFICATETYPE");
 	    //Full Name 主卡姓名	Text
-	    entity.setSurname(RandomNameBuilder.build());
+	    map.put("Surname",map.get("SURNAME")==null?"":map.get("SURNAME").toString());
+	    map.remove("SURNAME");
 	    //NameonCard 压花名	Text
-	    entity.setFirstName(RandomNameBuilder.getFirstName());
+	    map.put("FirstName",map.get("FIRSTNAME")==null?"":map.get("FIRSTNAME").toString());
+	    map.remove("FIRSTNAME");
 	    //中间名	Text
-	    entity.setMiddleName(RandomNameBuilder.getMiddleName());
+	    map.put("MiddleName",map.get("MIDDLENAME")==null?"":map.get("MIDDLENAME").toString());
+	    map.remove("MIDDLENAME");
 	    //Sex 性别	Text
-	    entity.setSex(Sex.randomType().code);
+	    map.put("Sex",map.get("SEX")==null?"":map.get("SEX").toString());
+	    map.remove("SEX");
 	    //Date of Birth 出生日期	Date
-	    entity.setDateofBirth(CommonTool.getBirthByCertNo(certNo));
-	    int index = RandomAddressBuilder.getRandomProvinceIndex();
-    	String province = RandomAddressBuilder.getRandomProvince(index);
-    	String city = RandomAddressBuilder.getRandomCity(index);
-    	String address = RandomAddressBuilder.getRandomAddress(province,city);
+	    map.put("DateofBirth",map.get("DATEOFBIRTH")==null?"":map.get("DATEOFBIRTH").toString());
+	    map.remove("DATEOFBIRTH");
 	    //Hm Addr1 住宅地址1	Text
-	    entity.setHomeAddress(address);
+	    map.put("HomeAddress",map.get("HOMEADDRESS")==null?"":map.get("HOMEADDRESS").toString());
+	    map.remove("HOMEADDRESS");
 	    //Hm City 住宅城市	Text
-	    entity.setInhabitCity(city);  
+	    map.put("InhabitCity",map.get("INHABITCITY")==null?"":map.get("INHABITCITY").toString());  
+	    map.remove("INHABITCITY");
 	    //HmPcode 住宅邮编	Text
-	    entity.setHomePostcode(RandomNumberBuilder.getRangeRandom2Str(1000000,9000000));
+	    map.put("HomePostcode",map.get("HOMEPOSTCODE")==null?"":map.get("HOMEPOSTCODE").toString());
+	    map.remove("HOMEPOSTCODE");
 	    //HmPhNum 住宅电话	Text
-	    entity.setHomePhoneNumber(RandomPhoneBuilder.getRandomTel());
+	    map.put("HomePhoneNumber",map.get("HOMEPHONENUMBER")==null?"":map.get("HOMEPHONENUMBER").toString());
+	    map.remove("HOMEPHONENUMBER");
 	    //Mobile 手机号码	Text	32
-	    entity.setMobilePhoneNumber(RandomPhoneBuilder.getRandomTel());
+	    map.put("MobilePhoneNumber",map.get("MOBILEPHONENUMBER")==null?"":map.get("MOBILEPHONENUMBER").toString());
+	    map.remove("MOBILEPHONENUMBER");
 	    //Co Name 单位名称	Text	70
-	    entity.setCompanyName(RandomCompayNameBuilder.getRandomCompayName());
+	    map.put("CompanyName",map.get("COMPANYNAME")==null?"":map.get("COMPANYNAME").toString());
+	    map.remove("COMPANYNAME");
 	    //Co Addr1 单位地址1	Text	40
-	    entity.setOfficeAddress1(RandomAddressBuilder.getRandomAddress(province,city));
+	    map.put("OfficeAddress1",map.get("OFFICEADDRESS1")==null?"":map.get("OFFICEADDRESS1").toString());
+	    map.remove("OFFICEADDRESS1");
 	    //Co Addr2 单位地址2	Text	40
-	    entity.setOfficeAddress2(" ");
+	    map.put("OfficeAddress2",map.get("OFFICEADDRESS2")==null?"":map.get("OFFICEADDRESS2").toString());
+	    map.remove("OfficeAddress2");
 	    //Co City 单位城市	Text	40
-	    entity.setCompanyAddress3(" ");
+	    map.put("CompanyAddress3",map.get("COMPANYADDRESS3")==null?"":map.get("COMPANYADDRESS3").toString());
+	    map.remove("CompanyAddress3");
 	    //Co Pcode 单位邮编	Text	10
-	    entity.setCompanyCity(city);
+	    map.put("CompanyCity",map.get("COMPANYCITY")==null?"":map.get("COMPANYCITY").toString());
+	    map.remove("COMPANYCITY");
 	    //Co Ph Num 单位电话	Text	32
-	    entity.setCompanyPhoneNumber(RandomPhoneBuilder.getRandomTel());
+	    map.put("CompanyPhoneNumber",map.get("COMPANYPHONENUMBER")==null?"":map.get("COMPANYPHONENUMBER").toString());
+	    map.remove("COMPANYPHONENUMBER");
 	    //Channel 营销代码	Text	21
-	    entity.setSalesCode("5556");
+	    map.put("SalesCode",map.get("SALESCODE")==null?"":map.get("SALESCODE").toString());
+	    map.remove("SALESCODE");
 	    //Src of App 申请来源	Text	21
-	    entity.setSourceCode(RandomCharacterBuilder.getRandomNumOrChar(1));
+	    map.put("SourceCode",map.get("SOURCECODE")==null?"":map.get("SOURCECODE").toString());
+	    map.remove("SOURCECODE");
 	    //Trackcode	Text	70
-	    entity.setTrackcode(RandomNumberBuilder.getRangeRandom2Str(1000,9999));
+	    map.put("Trackcode",map.get("TRACKCODE")==null?"":map.get("TRACKCODE").toString());
+	    map.remove("TRACKCODE");
 	    //CIM码	Text	40
-	    entity.setCimCode(RandomNumberBuilder.getRandomGuid(16));
+	    map.put("CimCode",map.get("CIMCODE")==null?"":map.get("CIMCODE").toString());
+	    map.remove("CIMCODE");
 	    //COOKIE地址	Text	40
-	    entity.setCookie(RandomIpBuilder.getRandomIp());
+	    map.put("Cookie",map.get("COOKIE")==null?"":map.get("COOKIE").toString());
+	    map.remove("COOKIE");
 	    //证件号码(公安)	Text	25
-	    entity.setIdvalue(certNo);
+	    //map.put("IDVALUE",map.get("IDVALUE")==null?"":map.get("IDVALUE").toString());
 	    //证件类型(公安)	Text	25
-	    entity.setIdtype(RandomNumberBuilder.getRangeRandom2Str(10,30));
+	   // map.put("IDTYPE",map.get("IDTYPE")==null?"":map.get("IDTYPE").toString());
 	    //配偶证件号码	Text	25
-	    entity.setSpouseidnumber(RandomCertNoBuilder.getRandomCertNo());
+	    //map.put("SPOUSEIDNUMBER",map.get("SPOUSEIDNUMBER")==null?"":map.get("SPOUSEIDNUMBER").toString());
 	    //app设备Id	Text	70
-	    entity.setAppID(RandomNumberBuilder.getRandomGuid(17));
+	    map.put("AppID",map.get("APPID")==null?"":map.get("APPID").toString());
+	    map.remove("APPID");
 	    //app手机设备标示码	Text	70
-	    entity.setAppCode(RandomNumberBuilder.getRandomGuid(14));
+	    map.put("AppCode",map.get("APPCODE")==null?"":map.get("APPCODE").toString());
+	    map.remove("APPCODE");
 	    //app渠道uuid	Text	70
-	    entity.setApp_uuid(RandomNumberBuilder.getRandomGuid(16));
+	    map.put("App_uuid",map.get("APP_UUID")==null?"":map.get("APP_UUID").toString());
+	    map.remove("APP_UUID");
 	    //IP地址	Text	40
-	    entity.setIp(RandomIpBuilder.getRandomIp());
+	    //map.put("IP",map.get("IP")==null?"":map.get("IP").toString());
 	    //审批结果	Text	10	通过，不通过
-	    entity.setApprovalResult(ApprovalResult.randomType().code);
+	    map.put("ApprovalResult",map.get("APPROVALRESULT")==null?"":map.get("APPROVALRESULT").toString());
+	    map.remove("APPROVALRESULT");
 	    //调查结论	Text	2	值：K,F,S,空
-	    entity.setResearchConclusion(ResearchConclusion.randomType().code);
+	    map.put("ResearchConclusion",map.get("RESEARCHCONCLUSION")==null?"":map.get("RESEARCHCONCLUSION").toString());
+	    map.remove("RESEARCHCONCLUSION");
 	    //报警代码	Text	2	值：H,S,C
-	    entity.setAlarmCode(AlarmCode.randomType().code);
-	    return entity;
-	}*/
+	    map.put("AlarmCode",map.get("ALARMCODE")==null?"":map.get("ALARMCODE").toString());
+	    map.remove("ALARMCODE");
+	    //标识
+	    map.put("flag",map.get("FLAG")==null?"":map.get("FLAG").toString());
+	    map.remove("flag");
+		apply.setData(map);
+		return apply;
+	}
+	
+	public static void main(String[] args) {
+		Map<String,Object> map = RandomDataModelBuilder.getRandomDataModel(1234566L, "2019-10-10");
+		System.out.println(map);
+		Map<String,Object> retMap = new LinkedHashMap<String,Object>();
+		for(Map.Entry<String, Object> ss : map.entrySet()) {
+			String key = ss.getKey();
+			Object value = ss.getValue();
+			retMap.put(key.toUpperCase(), value);
+			//map.remove(key);
+		}
+		System.out.println(retMap);
+		retMap.put("MyDataType", "1");
+		KafkaApplyCardEntity entity = processHisKafkaData(retMap);
+        Gson gson = new Gson();
+    	String jsonStr = gson.toJson(entity);
+		System.out.println(jsonStr);
+	}
 
 }
