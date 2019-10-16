@@ -42,7 +42,7 @@ public class MyAkkaProcessServiceImpl implements MyAkkaProcessService{
 	    	long sendAkkaStart = System.currentTimeMillis();
 	    	mapMessage.put("MyStartDate", "");
 	    	mapMessage.put("MyEndDate", "");
-	    	mapMessage.put("MyDataType", "2");
+	    	mapMessage.put("MyDataFlag", "2");
 	    	mapMessage.put("FLAT_TRAD_DATE_TIME","2019-10-13 00:00:00");
 	        String retJsonStr = MyHttpClientProcess.post(mapMessage);
 			log.info("send kafka message to akka cost :"+ (System.currentTimeMillis() - sendAkkaStart) +"ms");
