@@ -15,6 +15,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+import com.myboot.dataprocess.model.KafkaApplyCardEntity;
+import com.myboot.dataprocess.process.kafka.common.KafkaDataModelProcess;
 import com.myboot.dataprocess.process.kafka.common.MyKafkaConfiguration;
 import com.myboot.dataprocess.process.kafka.producer.MyKafkaProducerHistoryService;
 import com.myboot.dataprocess.process.phoenix.MyPhoenixProcessRepository;
@@ -33,6 +35,9 @@ public class MyKafkaProducerPhoenixServiceImpl implements MyKafkaProducerHistory
 	
     @Autowired
     private KafkaTemplate<String,String> kafkaTemplate;
+    
+    @Autowired
+    private KafkaDataModelProcess kafkaDataModelProcess;
     
 	private ScheduledExecutorService E2 = Executors.newScheduledThreadPool(1);
 	
@@ -72,8 +77,9 @@ public class MyKafkaProducerPhoenixServiceImpl implements MyKafkaProducerHistory
 		    			map.put(column,value);
 		    		}
 			        map.putAll(params);
+			        KafkaApplyCardEntity entity = kafkaDataModelProcess.processHisKafkaData(map);
 			        Gson gson = new Gson();
-			    	String jsonStr = gson.toJson(map);
+			    	String jsonStr = gson.toJson(entity);
 			    	log.info("send phoenix his data message :" + jsonStr);
 			        kafkaTemplate.send(topic,jsonStr);
 		            total++;

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.myboot.dataprocess.builder.RandomDataModelBuilder;
 import com.myboot.dataprocess.builder.RowkeyGenerator;
-import com.myboot.dataprocess.model.ApplyCardEntity;
 
 public class HbaseDataModelProcess {
 	
@@ -15,7 +14,7 @@ public class HbaseDataModelProcess {
 			RowkeyGenerator generator = RowkeyGenerator.getInstance(currentDate);
 			String rowkey = generator.getRowkey();
 			long sequence = generator.getSequence();
-			ApplyCardEntity data = RandomDataModelBuilder.getRandomDataModel(sequence, currentDate);
+			Map<String,Object> data = RandomDataModelBuilder.getRandomDataModel(sequence, currentDate);
 		    map.put(rowkey, data);
 		    //System.out.println("{"+rowkey+"="+data+"}");
 		}

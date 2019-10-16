@@ -1,6 +1,8 @@
 package com.myboot.dataprocess.model;
 
 
+import java.util.Map;
+
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
@@ -17,6 +19,6 @@ public class KafkaApplyCardEntity {
 	
 	private long timestamp;
 	
-	private ApplyCardEntity data;
+	private Map<String,Object> data;
 
 }
