@@ -56,7 +56,7 @@ public class MyAkkaProcessServiceImpl implements MyAkkaProcessService{
             log.info("send akka message to kafka cost :"+ (System.currentTimeMillis() - sendKafkaStart) +"ms" + retMap.toString());
             
     	}catch(Exception e) {
-    		log.error(" send source message to akka is fail...");
+    		log.error(" send source message to kafka is fail...");
     		log.error(e.getMessage());
     	}
 	}
@@ -69,7 +69,7 @@ public class MyAkkaProcessServiceImpl implements MyAkkaProcessService{
 	        MyHttpClientProcess.post(mapMessage);
 	        log.info("send kafka message to akka cost :"+ (System.currentTimeMillis() - sendAkkaStart) +"ms");
     	}catch(Exception e) {
-    		log.error(" send source message to akka is fail...");
+    		log.error(" send source message to kafka is fail...");
     		log.error(e.getMessage());
     	}
 	}
