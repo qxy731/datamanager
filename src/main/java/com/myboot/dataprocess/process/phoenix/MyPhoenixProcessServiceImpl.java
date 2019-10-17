@@ -2,6 +2,7 @@ package com.myboot.dataprocess.process.phoenix;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,9 @@ public class MyPhoenixProcessServiceImpl implements MyPhoenixProcessService{
 							try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 							    stmt.executeUpdate();
 							}catch(Exception e) {
-								
+								log.error("MyPhoenixProcessServiceImpl#processPhoenix: send current message to phoenix is fail...");
+								log.error("MyPhoenixProcessServiceImpl#processPhoenix: "+sql);
+								log.error("MyPhoenixProcessServiceImpl#processPhoenix: "+e.getMessage());
 							}
 						}
 						conn.commit();
@@ -94,7 +97,7 @@ public class MyPhoenixProcessServiceImpl implements MyPhoenixProcessService{
 			        sqls.clear();
 			      }
 			}catch(Exception e) {
-	    		log.error("send source message to phoenix is fail...");
+	    		log.error("MyPhoenixProcessServiceImpl#processPhoenix: send source message to phoenix is fail...");
 	    		log.error(e.getMessage());
 	    	}
     	});
@@ -106,6 +109,9 @@ public class MyPhoenixProcessServiceImpl implements MyPhoenixProcessService{
 		sb.append(tablename);
 		StringBuffer columns = new StringBuffer();
 		StringBuffer values = new StringBuffer();
+		mapMessage.remove("MyStartDate");
+		mapMessage.remove("MyEndDate");
+		mapMessage.remove("MyDataFlag");
 		int size = mapMessage.size();
 		int count = 0;
 		for(Map.Entry<String,Object> entry : mapMessage.entrySet()) {
@@ -122,13 +128,45 @@ public class MyPhoenixProcessServiceImpl implements MyPhoenixProcessService{
 				columns.append(",");
 				values.append(",");
 			}
-			sb.append("(").append(columns).append(")");
-			sb.append(" values (").append(values).append(")");
-			log.info("upsert into phoenix table sql:"+sb.toString());
-			if(sqls.size()<COMMIT_SIZE) {
-				sqls.add(sb.toString());
+		}
+		sb.append("(").append(columns).append(")");
+		sb.append(" values (").append(values).append(")");
+		log.info("upsert into phoenix table sql:"+sb.toString());
+		if(sqls.size()<COMMIT_SIZE) {
+			sqls.add(sb.toString());
+		}
+	}
+	
+	public static void main(String[] args) {
+		StringBuffer sb = new StringBuffer("upsert into ");
+		sb.append("POCTEST3_DEST");
+		Map<String, Object> mapMessage  =  new HashMap<String,Object>();
+		mapMessage.put("FLAT_TRAD_DATE_TIME", "13455");
+		mapMessage.put("MYSTARTDATE", "2222222222222222");
+		mapMessage.put("MYENDDATE", "33333333333333333");
+		int size = mapMessage.size();
+		mapMessage.remove("FLAT_TRAD_DATE_TIME");
+		int count = 0;
+		StringBuffer columns = new StringBuffer();
+		StringBuffer values = new StringBuffer();
+		for(Map.Entry<String,Object> entry : mapMessage.entrySet()) {
+			count++;
+			String key = entry.getKey();
+		    Object value = entry.getValue();
+		    String cvalue = "";
+		    if(value != null) {
+			     cvalue = String.valueOf(value);
+			}
+		    columns.append(key.toUpperCase());
+			values.append("'").append(cvalue).append("'");
+			if(count<size) {
+				columns.append(",");
+				values.append(",");
 			}
 		}
+		sb.append("(").append(columns).append(")");
+		sb.append(" values (").append(values).append(")");
+		log.info("upsert into phoenix table sql:"+sb.toString());
 	}
 	
 }

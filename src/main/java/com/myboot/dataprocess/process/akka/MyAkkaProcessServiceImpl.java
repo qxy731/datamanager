@@ -45,18 +45,20 @@ public class MyAkkaProcessServiceImpl implements MyAkkaProcessService{
 	    	mapMessage.put("MyDataFlag", "2");
 	    	mapMessage.put("FLAT_TRAD_DATE_TIME","2019-10-13 00:00:00");
 	        String retJsonStr = MyHttpClientProcess.post(mapMessage);
-			log.info("send kafka message to akka cost :"+ (System.currentTimeMillis() - sendAkkaStart) +"ms");
+			log.info("MyAkkaProcessServiceImpl#processAkkaImpl:send real-time kafka message to akka cost :"+ (System.currentTimeMillis() - sendAkkaStart) +"ms");
 			
 			long sendKafkaStart = System.currentTimeMillis();
 			Map<String,Object> retMap = MyHttpClientProcess.processResultContent(retJsonStr);
-			String applicationNumber = mapMessage.get("ApplicationNumber")==null?"ApplicationNumber":mapMessage.get("ApplicationNumber").toString();
-			retMap.put("ApplicationNumber",applicationNumber);
-            String destTopic = myKafkaConfiguration.getOtherParameter("dest.topic");
-            kafkaService.sendResultMessage(destTopic,retMap);
-            log.info("send akka message to kafka cost :"+ (System.currentTimeMillis() - sendKafkaStart) +"ms" + retMap.toString());
+			if(retMap != null) {
+				String applicationNumber = mapMessage.get("ApplicationNumber")==null?"ApplicationNumber":mapMessage.get("ApplicationNumber").toString();
+				retMap.put("ApplicationNumber",applicationNumber);
+	            String destTopic = myKafkaConfiguration.getOtherParameter("dest.topic");
+	            kafkaService.sendResultMessage(destTopic,retMap);
+			}
+            log.info("MyAkkaProcessServiceImpl#processAkkaImpl:send akka message to result topic kafka cost :"+ (System.currentTimeMillis() - sendKafkaStart) +"ms" + retMap.toString());
             
     	}catch(Exception e) {
-    		log.error(" send source message to kafka is fail...");
+    		log.error("MyAkkaProcessServiceImpl#processAkkaImpl:send real-time kafka message to result topic kafka is fail...");
     		log.error(e.getMessage());
     	}
 	}
@@ -64,12 +66,15 @@ public class MyAkkaProcessServiceImpl implements MyAkkaProcessService{
 	private void processHisAkkaImpl(Map<String, Object> mapMessage) {
 		try {
 	    	long sendAkkaStart = System.currentTimeMillis();
-			String applicationDate = mapMessage.get("ApplicationDate")==null?"2019-10-13":mapMessage.get("ApplicationDate").toString();
+			mapMessage.put("MyStartDate",mapMessage.get("MyStartDate")==null?"20190313":mapMessage.get("MyStartDate").toString());
+	    	mapMessage.put("MyEndDate",mapMessage.get("MyEndDate")==null?"20190929":mapMessage.get("MyEndDate").toString());
+	    	mapMessage.put("MyDataFlag","1");
+	    	String applicationDate = mapMessage.get("ApplicationDate")==null?"2019-10-13":mapMessage.get("ApplicationDate").toString();
 			mapMessage.put("FLAT_TRAD_DATE_TIME", applicationDate + " 00:00:00");
 	        MyHttpClientProcess.post(mapMessage);
-	        log.info("send kafka message to akka cost :"+ (System.currentTimeMillis() - sendAkkaStart) +"ms");
+	        log.info("MyAkkaProcessServiceImpl#processHisAkkaImpl:send history kafka message to akka cost :"+ (System.currentTimeMillis() - sendAkkaStart) +"ms");
     	}catch(Exception e) {
-    		log.error(" send source message to kafka is fail...");
+    		log.error("MyAkkaProcessServiceImpl#processHisAkkaImpl:send history kafka message to akka is fail...");
     		log.error(e.getMessage());
     	}
 	}

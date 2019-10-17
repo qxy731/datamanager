@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -41,8 +41,6 @@ public class MyKafkaProducerPhoenixServiceImpl implements MyKafkaProducerHistory
     
 	private ScheduledExecutorService E2 = Executors.newScheduledThreadPool(1);
 	
-	//private long mstart = System.currentTimeMillis() ;
-	
 	private static int total = 0;
 	
 	{
@@ -58,6 +56,7 @@ public class MyKafkaProducerPhoenixServiceImpl implements MyKafkaProducerHistory
      */
 	@Override
 	public void sendHisMessage(String topic, Map<String,Object> params) {
+		total = 0;
 		try(Connection conn = repository.getConnection()) {
 			String tablename = myKafkaConfiguration.getOtherParameter("phoenix_tablename");
 			if(topic==null || topic.length()<1) {
@@ -70,7 +69,7 @@ public class MyKafkaProducerPhoenixServiceImpl implements MyKafkaProducerHistory
 		        while (rs.next()) {
 		        	ResultSetMetaData meta = rs.getMetaData();
 		        	int length = meta.getColumnCount();
-		    		Map<String,Object> map = new LinkedHashMap<String,Object>();
+		    		Map<String,Object> map = new HashMap<String,Object>();
 		    		for(int i=1; i<length;i++) {
 		    			String column = meta.getColumnLabel(i);
 		    			String value = rs.getString(i);
@@ -80,14 +79,14 @@ public class MyKafkaProducerPhoenixServiceImpl implements MyKafkaProducerHistory
 			        KafkaApplyCardEntity entity = kafkaDataModelProcess.processHisKafkaData(map);
 			        Gson gson = new Gson();
 			    	String jsonStr = gson.toJson(entity);
-			    	log.info("send phoenix his data message :" + jsonStr);
+			    	log.info("MyKafkaProducerPhoenixServiceImpl#sendHisMessage: send phoenix his data message to source topic kafka:" + jsonStr);
 			        kafkaTemplate.send(topic,jsonStr);
 		            total++;
 		          }
-		          log.info("================"+(System.currentTimeMillis() - start) + ": " + total + "================");
+		          log.info("MyKafkaProducerPhoenixServiceImpl#sendHisMessage "+total+"total cost:"+(System.currentTimeMillis() - start) + "ms" );
 			}
 		}catch(Exception e) {
-			log.info("sendHisMessage throw excepton ...");
+			log.info("MyKafkaProducerPhoenixServiceImpl#sendHisMessage throw excepton ...");
 			log.error(e.getMessage());
 		}finally {
 			

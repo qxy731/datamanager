@@ -68,12 +68,11 @@ public class MyKafkaProducerController {
     		String topic = myKafkaConfiguration.getOtherParameter("source.topic");
     		String myStartDate = jsonStr.get("MyStartDate")==null?"20190313":jsonStr.get("MyStartDate").toString();
     		String myEndDate = jsonStr.get("MyEndDate")==null?"20190929":jsonStr.get("MyEndDate").toString();
-    		String myDataFlag = jsonStr.get("MyDataFlag")==null?"1":jsonStr.get("MyDataFlag").toString();
     		Map<String,Object> params = new HashMap<String,Object>();
     		params.put("MyStartDate", myStartDate);
     		params.put("MyEndDate", myEndDate);
-    		params.put("myDataFlag", myDataFlag);
-    		hisService.sendHisMessage(topic, params);
+    		params.put("MyDataFlag", "1");
+    		hisService.sendHisMessage(topic,params);
     		spi = new StatusInfo<String>();
     	}catch(Exception e) {
 			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);

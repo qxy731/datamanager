@@ -3,7 +3,6 @@ package com.myboot.dataprocess.builder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.google.gson.Gson;
 import com.myboot.dataprocess.builder.enums.AlarmCode;
 import com.myboot.dataprocess.builder.enums.ApprovalResult;
 import com.myboot.dataprocess.builder.enums.ResearchConclusion;
@@ -142,7 +141,7 @@ public class RandomDataModelBuilder {
 	    map.remove("CAPTURETIME");
 	    //中止日期	Date
 	    map.put("ExpiryDate",map.get("EXPIRYDATE")==null?"":map.get("EXPIRYDATE").toString());
-	    map.remove("ExpiryDate");
+	    map.remove("EXPIRYDATE");
 	    //申请日	Date
 	    map.put("ApplicationDate",map.get("APPLICATIONDATE")==null?"":map.get("APPLICATIONDATE").toString());
 	    map.remove("APPLICATIONDATE");
@@ -163,7 +162,7 @@ public class RandomDataModelBuilder {
 	    map.remove("DECISIONREASON");
 	    //处理日期	Date
 	    map.put("DecisionDate",map.get("DECISIONDATE")==null?"":map.get("DECISIONDATE").toString());
-	    map.remove("DecisionDate");
+	    map.remove("DECISIONDATE");
 	    //Id Num 证件号码	Text
 	    map.put("CertificateID",map.get("CERTIFICATEID")==null?"":map.get("CERTIFICATEID").toString());
 	    map.remove("CERTIFICATEID");
@@ -208,10 +207,10 @@ public class RandomDataModelBuilder {
 	    map.remove("OFFICEADDRESS1");
 	    //Co Addr2 单位地址2	Text	40
 	    map.put("OfficeAddress2",map.get("OFFICEADDRESS2")==null?"":map.get("OFFICEADDRESS2").toString());
-	    map.remove("OfficeAddress2");
+	    map.remove("OFFICEADDRESS2");
 	    //Co City 单位城市	Text	40
 	    map.put("CompanyAddress3",map.get("COMPANYADDRESS3")==null?"":map.get("COMPANYADDRESS3").toString());
-	    map.remove("CompanyAddress3");
+	    map.remove("COMPANYADDRESS3");
 	    //Co Pcode 单位邮编	Text	10
 	    map.put("CompanyCity",map.get("COMPANYCITY")==null?"":map.get("COMPANYCITY").toString());
 	    map.remove("COMPANYCITY");
@@ -261,27 +260,12 @@ public class RandomDataModelBuilder {
 	    map.remove("ALARMCODE");
 	    //标识
 	    map.put("flag",map.get("FLAG")==null?"":map.get("FLAG").toString());
-	    map.remove("flag");
+	    map.remove("FLAG");
 		apply.setData(map);
 		return apply;
 	}
 	
 	public static void main(String[] args) {
-		Map<String,Object> map = RandomDataModelBuilder.getRandomDataModel(1234566L, "2019-10-10");
-		System.out.println(map);
-		Map<String,Object> retMap = new LinkedHashMap<String,Object>();
-		for(Map.Entry<String, Object> ss : map.entrySet()) {
-			String key = ss.getKey();
-			Object value = ss.getValue();
-			retMap.put(key.toUpperCase(), value);
-			//map.remove(key);
-		}
-		System.out.println(retMap);
-		retMap.put("MyDataType", "1");
-		KafkaApplyCardEntity entity = processHisKafkaData(retMap);
-        Gson gson = new Gson();
-    	String jsonStr = gson.toJson(entity);
-		System.out.println(jsonStr);
 	}
 
 }

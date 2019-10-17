@@ -1,16 +1,12 @@
 package com.myboot.dataprocess.process.httpclient;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
-import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -32,21 +28,24 @@ public class MyHttpClientProcess {
 	 * @return
 	 */
 	public static String post(Map<String,Object> map) {
-		// 获得Http客户端(可以理解为:你得先有一个浏览器;注意:实际上HttpClient与浏览器是不一样的)
+		// 获得Http客户端
 		CloseableHttpClient httpClient = HttpClientUtil.getHttpClient();
+		//CloseableHttpClient httpClient = HttpClients.createDefault();
 		Map<String,Object> newMap = new LinkedHashMap<String,Object>();
 		newMap.putAll(map);
-		Gson gson = new Gson();
 		// 创建Post请求
-		HttpPost httpPost = new HttpPost("http://182.180.115.236:13551/call");
-		RequestConfig requestConfig = RequestConfig.custom()
+		String url = "http://182.180.115.236:13551/call";
+		//String url = "http://127.0.0.1:8090/datamanager/call";
+		HttpPost httpPost = new HttpPost(url);
+		/*RequestConfig requestConfig = RequestConfig.custom()
 			      .setSocketTimeout(2000)//数据传输过程中数据包之间间隔的最大时间
 			      .setConnectTimeout(2000)//连接建立时间，三次握手完成时间
 			      .setExpectContinueEnabled(true)//重点参数 
 			      .setConnectionRequestTimeout(2000)
 			      .build();
-		httpPost.setConfig(requestConfig);
+		httpPost.setConfig(requestConfig);*/
 		newMap.put("reqNo",UUID.randomUUID().toString());
+		Gson gson = new Gson();
 		String jsonString = gson.toJson(newMap);
 		StringEntity entity = new StringEntity(jsonString, "UTF-8");
 		// post请求是将参数放在请求体里面传过去的;这里将entity放入post请求体中
@@ -62,6 +61,11 @@ public class MyHttpClientProcess {
 		try {
 			//由客户端执行(发送)Post请求
 			response = httpClient.execute(httpPost);
+			if(response == null) {
+				log.info("httpclient response is null ...");
+				return null;
+			}
+			//log.info("response.getStatusLine().getStatusCode() "+response.getStatusLine().getStatusCode() );
 			if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
 				log.info("httpclient request is fail ...");
 				return  null;
@@ -72,30 +76,33 @@ public class MyHttpClientProcess {
 		        return  null;
 		    }
 		    String result=EntityUtils.toString(resEntity, "UTF-8");
-		    log.info("response status:"+ response.getStatusLine() + "response content:" + EntityUtils.toString(resEntity));
+		    log.info("http response result:"+ result);
 			return result;
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error(e.getMessage());
 		} finally {
 			// 释放资源
-			if (httpClient != null) {
+			/*if (httpClient != null) {
 				try {
 					httpClient.close();
 				} catch (IOException e) {
 			         //System.out.println("关闭response失败:"+ e);
 			    }
-			}
-			if (response != null) {
+			}*/
+			/*if (response != null) {
 				try {
 					//此处调优重点，多线程模式下可提高性能。
 					//此处高能，通过源码分析，由EntityUtils是否回收HttpEntity
 			        EntityUtils.consume(response.getEntity());
 			        response.close();
 			     } catch (IOException e) {
+			         //System.out.println("关闭response失败:"+ e);
+			     }
+			}*/
+			if(httpPost != null ) {
+				try {
+					httpPost.releaseConnection();
+			     } catch (Exception e) {
 			         //System.out.println("关闭response失败:"+ e);
 			     }
 			}
@@ -115,6 +122,10 @@ public class MyHttpClientProcess {
 		Map<String,Object> resultMap = (Map<String,Object>)payload.get("resultMap");
 		if(resultMap==null)return null;
 		return resultMap;
+	}
+	
+	public static void main(String[] args) {
+		
 	}
 
 }
