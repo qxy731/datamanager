@@ -15,6 +15,7 @@ import org.apache.http.util.EntityUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.myboot.dataprocess.common.MyConstants;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,16 +35,7 @@ public class MyHttpClientProcess {
 		Map<String,Object> newMap = new LinkedHashMap<String,Object>();
 		newMap.putAll(map);
 		// 创建Post请求
-		String url = "http://182.180.115.236:13551/call";
-		//String url = "http://127.0.0.1:8090/datamanager/call";
-		HttpPost httpPost = new HttpPost(url);
-		/*RequestConfig requestConfig = RequestConfig.custom()
-			      .setSocketTimeout(2000)//数据传输过程中数据包之间间隔的最大时间
-			      .setConnectTimeout(2000)//连接建立时间，三次握手完成时间
-			      .setExpectContinueEnabled(true)//重点参数 
-			      .setConnectionRequestTimeout(2000)
-			      .build();
-		httpPost.setConfig(requestConfig);*/
+		HttpPost httpPost = new HttpPost(MyConstants.HTTP_URL);
 		newMap.put("reqNo",UUID.randomUUID().toString());
 		Gson gson = new Gson();
 		String jsonString = gson.toJson(newMap);
@@ -51,7 +43,7 @@ public class MyHttpClientProcess {
 		// post请求是将参数放在请求体里面传过去的;这里将entity放入post请求体中
 		httpPost.setEntity(entity);
 		httpPost.setHeader("Content-Type", "application/json;charset=utf8");
-		//httpPost.setHeader("reqTimeMs",System.currentTimeMillis()+"");
+		httpPost.setHeader("reqTimeMs",System.currentTimeMillis()+"");
 		httpPost.setHeader("api","tradErm02");
 		httpPost.setHeader("reqMode", "slow");
 		httpPost.setHeader("dinstMode", "his");
@@ -76,7 +68,7 @@ public class MyHttpClientProcess {
 		        return  null;
 		    }
 		    String result=EntityUtils.toString(resEntity, "UTF-8");
-		    log.info("http response result:"+ result);
+		    //log.info("http response result:"+ result);
 			return result;
 		} catch (Exception e) {
 			log.error(e.getMessage());

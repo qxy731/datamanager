@@ -6,9 +6,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -39,16 +36,16 @@ public class MyKafkaProducerPhoenixServiceImpl implements MyKafkaProducerHistory
     @Autowired
     private KafkaDataModelProcess kafkaDataModelProcess;
     
-	private ScheduledExecutorService E2 = Executors.newScheduledThreadPool(1);
+	//private ScheduledExecutorService E2 = Executors.newScheduledThreadPool(1);
 	
 	private static int total = 0;
 	
-	{
+	/*{
 	    E2.scheduleWithFixedDelay(() -> {
 	    	log.info("从phoenix往kafka已经加载"+total+"条数据。");
 	    }, 5L, 3L, TimeUnit.SECONDS);
 	}
-	
+	*/
     
     /**
      * 从phoenix源表中读取1000W数据推送到kafka
@@ -67,10 +64,11 @@ public class MyKafkaProducerPhoenixServiceImpl implements MyKafkaProducerHistory
 		        ResultSet rs = stmt.executeQuery(sql);
 		        long start = System.currentTimeMillis();
 		        while (rs.next()) {
+		        	total++;
 		        	ResultSetMetaData meta = rs.getMetaData();
 		        	int length = meta.getColumnCount();
 		    		Map<String,Object> map = new HashMap<String,Object>();
-		    		for(int i=1; i<length;i++) {
+		    		for(int i=1; i<=length;i++) {
 		    			String column = meta.getColumnLabel(i);
 		    			String value = rs.getString(i);
 		    			map.put(column,value);
@@ -79,9 +77,8 @@ public class MyKafkaProducerPhoenixServiceImpl implements MyKafkaProducerHistory
 			        KafkaApplyCardEntity entity = kafkaDataModelProcess.processHisKafkaData(map);
 			        Gson gson = new Gson();
 			    	String jsonStr = gson.toJson(entity);
-			    	log.info("MyKafkaProducerPhoenixServiceImpl#sendHisMessage: send phoenix his data message to source topic kafka:" + jsonStr);
+			    	//log.info("MyKafkaProducerPhoenixServiceImpl#sendHisMessage: send phoenix his data message to source topic kafka:" + jsonStr);
 			        kafkaTemplate.send(topic,jsonStr);
-		            total++;
 		          }
 		          log.info("MyKafkaProducerPhoenixServiceImpl#sendHisMessage "+total+"total cost:"+(System.currentTimeMillis() - start) + "ms" );
 			}

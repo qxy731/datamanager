@@ -11,6 +11,9 @@ public class DataprocessApplication{
 
 	public static void main(String[] args) {
 		SpringApplication.run(DataprocessApplication.class, args);
+		/*if("AKKAHTTP".equals(MyConstants.HTTP_TYPE)) {
+			MyAkkaHttpServerApi.start();
+		}*/
 	}
 	
 }

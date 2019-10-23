@@ -31,7 +31,6 @@ public class MyKafkaProducerTemplate {
     
     public Map<String, Object> producerConfigs() {
         Map<String, Object> props = new HashMap<>();
-        //myKafkaProducerConfig.getCommonParameter(key)
         props.putAll(myKafkaProducerConfig.getCommon());
         props.putAll(myKafkaProducerConfig.getProducer());
         /*props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, server);

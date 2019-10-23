@@ -1,9 +1,8 @@
-package com.myboot.dataprocess.process.akka;
+package com.myboot.dataprocess.process.akka.server;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,30 +23,26 @@ import lombok.extern.slf4j.Slf4j;
 @Api
 @Slf4j
 @RestController
-public class MyAkkaProcessController {
+public class MyHttpClientServerApi {
 	
-	@ApiOperation(value="Kafka推送数据", notes="Kafka推送数据")
+	@ApiOperation(value="接收kafka推送数据", notes="接收kafka推送数据")
 	@RequestMapping(value = "/call", method = {RequestMethod.POST,RequestMethod.GET})
-	public String call(HttpServletRequest request, HttpServletResponse response, @RequestBody String requestBody) {
-		response.setStatus(200);
+	public String call(@RequestBody String result,HttpServletResponse response) {
+	    log.info("MyAkkaProcessController#call:receive content:"+ result);
 		long startTime = System.currentTimeMillis();
 		Gson gson = new Gson();
-		Map<String,Object> map = gson.fromJson(requestBody, new TypeToken<HashMap<String,Object>>(){}.getType());
+		Map<String,Object> map = gson.fromJson(result, new TypeToken<HashMap<String,Object>>(){}.getType());
         if(map==null) {
         	return null;
         }
         String reqNo = map.get("reqNo")==null?"":map.get("reqNo").toString();
 		EvalResultDto payload = new EvalResultDto(reqNo);
-		Map<String,Object> resultMap = new HashMap<String,Object>();
-		payload.setResultMap(resultMap);
+		payload.setResultMap(map);
 		ApiResponse<EvalResultDto> api = new ApiResponse<EvalResultDto>(StatusEnum.S, "1", "成功", payload);
-		log.info("call cost"+(System.currentTimeMillis() -startTime )+"ms");
+		log.info("MyAkkaProcessController#call:receive content:"+ api);
+		log.info("dinst call cost： "+(System.currentTimeMillis() -startTime )+"ms");
+		response.setStatus(200);
         return gson.toJson(api);
-	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

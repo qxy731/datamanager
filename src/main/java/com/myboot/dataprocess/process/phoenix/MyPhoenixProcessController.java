@@ -1,5 +1,6 @@
 package com.myboot.dataprocess.process.phoenix;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,50 @@ public class MyPhoenixProcessController {
     		List<String> sqls = jsonStr.get("sql")==null?new LinkedList<String>():(LinkedList<String>)jsonStr.get("sql");
     		service.save(sqls);
 			spi = new StatusInfo<>();
+    	}catch(Exception e) {
+			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
+			log.info(ErrorMessage.msg_opt_fail.getMsg());
+		}
+    	return spi;
+	}
+	
+	@ApiOperation(value="保存SQL文件数据", notes="保存SQL文件数据")
+	@RequestMapping(value = "/write", method = {RequestMethod.POST,RequestMethod.GET})
+	public StatusInfo<Map<String,Integer>> write(@RequestBody Map<String,LinkedList<String>> jsonStr) {
+		StatusInfo<Map<String,Integer>> spi = null;
+    	try {
+    		Map<String,Integer> map = service.writeHisData();
+			spi = new StatusInfo<Map<String,Integer>>(map);
+    	}catch(Exception e) {
+			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
+			log.info(ErrorMessage.msg_opt_fail.getMsg());
+		}
+    	return spi;
+	}
+	
+	@ApiOperation(value="保存SQL文件数据", notes="保存SQL文件数据")
+	@RequestMapping(value = "/writesql", method = {RequestMethod.POST,RequestMethod.GET})
+	public StatusInfo<Map<String,Integer>> writeSQL(@RequestBody Map<String,LinkedList<String>> jsonStr) {
+		StatusInfo<Map<String,Integer>> spi = null;
+    	try {
+    		List<String> sqls = jsonStr.get("sql")==null?new LinkedList<String>():(LinkedList<String>)jsonStr.get("sql");
+    		Map<String,Integer> map = service.writeHisDataBySql(sqls);
+			spi = new StatusInfo<Map<String,Integer>>(map);
+    	}catch(Exception e) {
+			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
+			log.info(ErrorMessage.msg_opt_fail.getMsg());
+		}
+    	return spi;
+	}
+	
+	@ApiOperation(value="保存SQL文件数据", notes="保存SQL文件数据")
+	@RequestMapping(value = "/writefile", method = {RequestMethod.POST,RequestMethod.GET})
+	public StatusInfo<Map<String,Integer>> writeFile(@RequestBody Map<String,HashMap<String,String>> jsonStr) {
+		StatusInfo<Map<String,Integer>> spi = null;
+    	try {
+    		Map<String,String> sqls = jsonStr.get("sql")==null?new HashMap<String,String>():(Map<String,String>)jsonStr.get("sql");
+    		Map<String,Integer> map = service.writeHisDataByFile(sqls);
+			spi = new StatusInfo<Map<String,Integer>>(map);
     	}catch(Exception e) {
 			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
 			log.info(ErrorMessage.msg_opt_fail.getMsg());

@@ -13,4 +13,10 @@ public interface MyPhoenixProcessService {
 	
 	public void save(List<String> sqls) throws Exception;
 	
+	public Map<String,Integer> writeHisData()  throws Exception;
+	
+	public Map<String,Integer> writeHisDataBySql(List<String> sqls)  throws Exception;
+	
+	public Map<String,Integer> writeHisDataByFile(Map<String,String> map)  throws Exception;
+	
 }

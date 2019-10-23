@@ -37,7 +37,8 @@ public class MyKafkaProducerServiceImpl implements MyKafkaProducerService {
         	KafkaApplyCardEntity entity = kafkaDataModelProcess.assembleKafkaData(currentDate);
         	Gson gson = new Gson();
         	String jsonStr = gson.toJson(entity);
-        	log.info("send assemble data message :" + jsonStr);
+        	//log.info("send assemble data message :" + jsonStr);
+        	log.info("send assemble data message :" + (i+1));
             kafkaTemplate.send(topic,jsonStr);
         }
     }
@@ -48,7 +49,7 @@ public class MyKafkaProducerServiceImpl implements MyKafkaProducerService {
     public void sendHisMessage(String topic, Map<String, Object> entity) {
     	Gson gson = new Gson();
     	String jsonStr = gson.toJson(entity);
-    	log.info("send his data message :" + jsonStr);
+    	//log.info("send his data message :" + jsonStr);
         kafkaTemplate.send(topic,jsonStr);
     }
     
@@ -58,7 +59,7 @@ public class MyKafkaProducerServiceImpl implements MyKafkaProducerService {
     public void sendResultMessage(String topic,Map<String, Object> entity) {
     	Gson gson = new Gson();
     	String jsonStr = gson.toJson(entity);
-    	log.info("send result message :" + jsonStr);
+    	//log.info("send result message :" + jsonStr);
         kafkaTemplate.send(topic,jsonStr);
     }
 

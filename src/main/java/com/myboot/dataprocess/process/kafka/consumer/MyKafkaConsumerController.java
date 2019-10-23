@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.myboot.dataprocess.common.ErrorMessage;
+import com.myboot.dataprocess.common.MyConstants;
 import com.myboot.dataprocess.common.StatusInfo;
 
 import io.swagger.annotations.Api;
@@ -38,7 +39,7 @@ public class MyKafkaConsumerController {
 		StatusInfo<String> spi = null;
     	try {
     		int count = map.get("count")==null?0:Integer.valueOf(map.get("count").toString());
-    		int myDataFlag = map.get("myDataFlag")==null?1:Integer.valueOf(map.get("myDataFlag").toString());
+    		int myDataFlag = map.get(MyConstants.MY_DATA_FLAG_NAME)==null?Integer.valueOf(MyConstants.MY_DATA_FLAG_HIS):Integer.valueOf(map.get(MyConstants.MY_DATA_FLAG_NAME).toString());
     		service.listenerTest(myDataFlag,count);
     		spi = new StatusInfo<String>();
     	}catch(Exception e) {

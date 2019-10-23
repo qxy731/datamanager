@@ -25,8 +25,8 @@ public class HttpClientUtil {
                 .register("http", new PlainConnectionSocketFactory())
                 .build();
         cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-        cm.setMaxTotal(1000);//多线程调用注意配置，根据线程数设定,可接收的最大请求数
-        cm.setDefaultMaxPerRoute(500);//多线程调用注意配置，根据线程数设定，可并行处理的最大线程数
+        cm.setMaxTotal(500);//多线程调用注意配置，根据线程数设定,可接收的最大请求数
+        cm.setDefaultMaxPerRoute(200);//多线程调用注意配置，根据线程数设定，可并行处理的最大线程数
         cm.setValidateAfterInactivity(3000);//验证不活跃
 
     }
@@ -36,7 +36,7 @@ public class HttpClientUtil {
 			      .setSocketTimeout(10000)//数据传输过程中数据包之间间隔的最大时间
 			      .setConnectTimeout(10000)//连接建立时间，三次握手完成时间
 			      .setExpectContinueEnabled(true)//重点参数 
-			      .setConnectionRequestTimeout(10000)
+			      .setConnectionRequestTimeout(6000)
 			      .build();
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setConnectionManager(cm)

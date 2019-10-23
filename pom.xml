@@ -25,9 +25,10 @@
 		<kafka.version>1.0.1</kafka.version>
 		<zookeeper.version>3.4.5-cdh5.16.1</zookeeper.version>
 		<spark.version>2.3.0</spark.version>
-		<scala.binary.version>2.11</scala.binary.version>
+		<scala.binary.version>2.12</scala.binary.version>
 		<maven-jar-plugin.version>3.0.0</maven-jar-plugin.version>
-		<!-- <akka-core.version>2.6.0-M5</akka-core.version> <akka-http.version>10.1.9</akka-http.version> -->
+		<akka-core.version>2.6.0-M8</akka-core.version>
+		<akka-http.version>10.1.10</akka-http.version>
 		<phoenix.version>4.14.1-HBase-1.2</phoenix.version>
 	</properties>
 
@@ -353,6 +354,34 @@
 		    <artifactId>commons-lang3</artifactId>
 		    <version>3.9</version>
 	   </dependency>
+	   
+	   <dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-http_${scala.binary.version}</artifactId>
+			<version>${akka-http.version}</version>
+		</dependency>
+		<dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-stream_${scala.binary.version}</artifactId>
+            <version>${akka-core.version}</version>
+        </dependency>
+        <!-- <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor_${scala.binary.version}</artifactId>
+            <version>${akka-core.version}</version>
+        </dependency> -->
+        
+        <dependency>
+			<groupId>org.apache.ignite</groupId>
+			<artifactId>ignite-core</artifactId>
+			<version>2.7.6</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.ignite</groupId>
+			<artifactId>ignite-log4j2</artifactId>
+			<version>2.7.6</version>
+		</dependency>
 
 	</dependencies>
 
@@ -391,6 +420,8 @@
 				<artifactId>springfox-swagger-ui</artifactId>
 				<version>2.6.1</version>
 			</dependency>
+			
+			
 		</dependencies>
 	</dependencyManagement>
 

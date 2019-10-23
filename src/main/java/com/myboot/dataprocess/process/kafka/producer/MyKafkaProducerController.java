@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.myboot.dataprocess.common.ErrorMessage;
+import com.myboot.dataprocess.common.MyConstants;
 import com.myboot.dataprocess.common.StatusInfo;
 import com.myboot.dataprocess.process.kafka.common.MyKafkaConfiguration;
 import com.myboot.dataprocess.tools.CommonTool;
@@ -50,7 +51,7 @@ public class MyKafkaProducerController {
     	try {
     		int count = map.get("count")==null?0:Integer.valueOf(map.get("count").toString());
     		String currentDate = CommonTool.getCurrentDate();
-    		String topic = myKafkaConfiguration.getOtherParameter("source.topic");
+    		String topic =   myKafkaConfiguration.getOtherParameter("source.topic");
     		service.sendAssembleMessage(topic, count, currentDate);
     		spi = new StatusInfo<String>();
     	}catch(Exception e) {
@@ -66,12 +67,10 @@ public class MyKafkaProducerController {
 		StatusInfo<String> spi = null;
     	try {
     		String topic = myKafkaConfiguration.getOtherParameter("source.topic");
-    		String myStartDate = jsonStr.get("MyStartDate")==null?"20190313":jsonStr.get("MyStartDate").toString();
-    		String myEndDate = jsonStr.get("MyEndDate")==null?"20190929":jsonStr.get("MyEndDate").toString();
     		Map<String,Object> params = new HashMap<String,Object>();
-    		params.put("MyStartDate", myStartDate);
-    		params.put("MyEndDate", myEndDate);
-    		params.put("MyDataFlag", "1");
+    		params.put(MyConstants.MY_START_DATE_NAME,jsonStr.get(MyConstants.MY_START_DATE_NAME));
+    		params.put(MyConstants.MY_END_DATE_NAME,jsonStr.get(MyConstants.MY_END_DATE_NAME));
+    		params.put(MyConstants.MY_DATA_FLAG_NAME,jsonStr.get(MyConstants.MY_DATA_FLAG_NAME));
     		hisService.sendHisMessage(topic,params);
     		spi = new StatusInfo<String>();
     	}catch(Exception e) {
