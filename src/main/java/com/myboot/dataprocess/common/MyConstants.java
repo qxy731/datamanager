@@ -31,7 +31,9 @@ public class MyConstants {
     public final static String MY_APPLICATION_DATE_DEFAULT = "2019-10-13";
     
     /**AKKAHTTP,HTTPCLIENT*/
-    public final static String HTTP_TYPE = "AKKAHTTP";
+   // public final static String HTTP_TYPE = "AKKAHTTP";
+	 public final static String HTTP_TYPE = "HTTPCLIENT";
+	
     
     //public final static String HTTP_SERVER_IP = "127.0.0.1";
     public final static int HTTP_SERVER_PORT = 13551;

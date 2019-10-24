@@ -123,8 +123,12 @@ public class MyHbaseProcessServiceImpl implements MyHbaseProcessService {
 			String tableName =  myHbaseConfiguration.getOtherParameter("tablename");
 			String columnFamily = myHbaseConfiguration.getOtherParameter("columnfamily");
 			int days = CommonTool.betweenDay(startDate, endDate);
-			int dayTotal = total/days;
-			int modTotal = total%days;
+			int dayTotal = 0;
+			int modTotal = total;
+			if(days > 0) {
+				dayTotal = total/days;
+				modTotal = total%days;
+			}
 			String currentDate = startDate;
 			hbaseRepository.getConnection();
 			for(int d = 0; d < days; d++) {

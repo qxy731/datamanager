@@ -33,6 +33,9 @@ public class MyKafkaProducerServiceImpl implements MyKafkaProducerService {
      * 发送造数数据
      */
     public void sendAssembleMessage(String topic, int count,String currentDate) {
+        if(null == topic) {
+            return;
+        }
         for(int i=0;i<count;i++) {
         	KafkaApplyCardEntity entity = kafkaDataModelProcess.assembleKafkaData(currentDate);
         	Gson gson = new Gson();

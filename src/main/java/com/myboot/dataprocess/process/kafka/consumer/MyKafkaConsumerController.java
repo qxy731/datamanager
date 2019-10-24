@@ -44,7 +44,7 @@ public class MyKafkaConsumerController {
     		spi = new StatusInfo<String>();
     	}catch(Exception e) {
 			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
-			log.info(ErrorMessage.msg_opt_fail.getMsg());
+			log.error(ErrorMessage.msg_opt_fail.getMsg());
 		}
     	return spi ;
 	}	

@@ -43,15 +43,17 @@ public class MyPhoenixProcessRepository {
 	public List<Map<String,String>> query(String sql) throws Exception {
 		List<Map<String,String>> list = new ArrayList<Map<String,String>>();
 		try(Connection conn = getConnection()) {
-			try(PreparedStatement stmt = conn.prepareStatement(sql.toLowerCase())){
+//			try(PreparedStatement stmt = conn.prepareStatement(sql.toLowerCase())){
+			try(PreparedStatement stmt = conn.prepareStatement(sql)){
 			    try(ResultSet rs = stmt.executeQuery()){
 			    	ResultSetMetaData meta = rs.getMetaData();
 			    	int length = meta.getColumnCount();
 			    	while(rs.next()) {
 			    		Map<String,String> map = new LinkedHashMap<String,String>();
-			    		for(int i=1; i<length;i++) {
+			    		for(int i=1; i<=length;i++) {
 			    			String column = meta.getColumnLabel(i);
 			    			String value = rs.getString(i);
+			    			log.info("Get data from pheonix : column = "+column+";value = "+value);
 			    			map.put(column,value);
 			    		}
 			    		list.add(map);

@@ -32,15 +32,15 @@ public class HttpClientUtil {
     }
 
     public static CloseableHttpClient getHttpClient() {
-    	RequestConfig requestConfig = RequestConfig.custom()
-			      .setSocketTimeout(10000)//数据传输过程中数据包之间间隔的最大时间
-			      .setConnectTimeout(10000)//连接建立时间，三次握手完成时间
-			      .setExpectContinueEnabled(true)//重点参数 
-			      .setConnectionRequestTimeout(6000)
-			      .build();
+//    	RequestConfig requestConfig = RequestConfig.custom()
+//			      .setSocketTimeout(10000)//数据传输过程中数据包之间间隔的最大时间
+//			      .setConnectTimeout(10000)//连接建立时间，三次握手完成时间
+//			      .setExpectContinueEnabled(true)//重点参数 
+//			      .setConnectionRequestTimeout(6000)
+//			      .build();
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setConnectionManager(cm)
-                .setDefaultRequestConfig(requestConfig)
+//                .setDefaultRequestConfig(requestConfig)
                 //.setConnectionManagerShared(true)
                 .build();
         return httpClient;

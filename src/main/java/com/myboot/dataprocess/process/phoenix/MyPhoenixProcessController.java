@@ -41,11 +41,12 @@ public class MyPhoenixProcessController {
 		StatusInfo<List<Map<String, String>>> spi = null;
     	try {
     		String sql = jsonStr.get("sql")==null?"":jsonStr.get("sql").toString();
+    		log.info("query input sql = "+sql);
     		List<Map<String, String>> list = service.query(sql);
 			spi = new StatusInfo<List<Map<String, String>>>(list);
     	}catch(Exception e) {
 			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
-			log.info(ErrorMessage.msg_opt_fail.getMsg());
+			log.error(ErrorMessage.msg_opt_fail.getMsg());
 		}
     	return spi;
 	}
