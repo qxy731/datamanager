@@ -35,7 +35,7 @@ public class MyIgniteProcessServiceImpl implements MyIgniteProcessService {
 	 * value = count值
 	 * 同文件同纬度同条件下的数据
 	 */
-	Map<String, Integer> data = new HashMap<String, Integer>();
+	Map<String, Long> data = new HashMap<String, Long>();
 	
  	IgniteFilePojo tmpPojo = new IgniteFilePojo();
  	
@@ -159,9 +159,9 @@ public class MyIgniteProcessServiceImpl implements MyIgniteProcessService {
 		for (int i = 0; i < arr.length; i++) {
 			VersionCache vc = VersionCache.of(data, data.size());
 			ImmutablePair<String, Object> rowData = new ImmutablePair<String, Object>(arr[i], vc);
-			data.clear();
 			dataList.add(rowData);
 		}
+		data.clear();
 	}
 	
 	private void putData(String[] arr,Map<String,Object> map) {
@@ -170,7 +170,7 @@ public class MyIgniteProcessServiceImpl implements MyIgniteProcessService {
 			String applicationdate = map.get("APPLICATIONDATE")==null?"20191013":map.get("APPLICATIONDATE").toString();
 			applicationdate = applicationdate.replaceAll("-", "").substring(0, 8);
 			// 获取统计数
-			int count = map.get("COUNT")==null?0:Integer.valueOf(map.get("COUNT").toString());
+			long count = map.get("COUNT")==null?0:Long.valueOf(map.get("COUNT").toString());
 			data.put(applicationdate, count);
 		}
 	}
