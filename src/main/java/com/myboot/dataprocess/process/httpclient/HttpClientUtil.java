@@ -1,6 +1,5 @@
 package com.myboot.dataprocess.process.httpclient;
 
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;

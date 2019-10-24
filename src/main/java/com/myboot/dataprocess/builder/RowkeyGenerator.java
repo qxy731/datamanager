@@ -24,6 +24,7 @@ public class RowkeyGenerator {
 	public static RowkeyGenerator getInstance(String currentDate) {
 		sequence++;
     	rowkey = currentDate.replaceAll("-", "")+sequence+"|"+String.valueOf(System.currentTimeMillis());
+    	//rowkey = UUID.randomUUID().toString();
 		return instance;
 	}
 	

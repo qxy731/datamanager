@@ -1,5 +1,6 @@
 package com.myboot.dataprocess.process.akka;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -60,6 +61,17 @@ public class AkkaHttpClient {
 		    	log.error(e.getMessage());
 		    }
 		  return null;
+	  }
+	  
+	  public static void main(String[] args) throws Exception {
+		  Map<String,Object> mapMessage = new HashMap<String,Object>();
+		  mapMessage.put(MyConstants.MY_START_DATE_NAME,"");
+		  mapMessage.put(MyConstants.MY_END_DATE_NAME,"");
+		  mapMessage.put(MyConstants.MY_DATA_FLAG_NAME, MyConstants.MY_DATA_FLAG_REAL);
+		  mapMessage.put(MyConstants.FLAT_TRAD_DATE_TIME_NAME,MyConstants.FLAT_TRAD_DATE_TIME_DEFAULT);
+		  mapMessage.put(MyConstants.MY_APP_DATA_TYPE_NAME,MyConstants.MY_APP_DATA_TYPE_DEFAULT);
+		  post(mapMessage);
+		  
 	  }
 	  
 	  

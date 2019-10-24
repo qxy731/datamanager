@@ -53,5 +53,15 @@ public class MyConstants {
     public final static String HTTP_URL = "http://"+HTTP_SERVER_IP+":"+HTTP_SERVER_PORT+HTTP_SERVER_PROJECT+HTTP_SERVER_METHOD;
     //public final static String HTTP_URL = "http://182.180.115.236:13551/call";
     //public final static String HTTP_URL = "http://127.0.0.1:8090/datamanager/call";
+    
+    public final static String IGNITE_CACHE_KEY_DEFAULT = "myStreamCache";
+    
+    public final static String IGNITE_SERVER_PORT = "47500..47509";
 
+    public final static String IGNITE_SERVER_IP = HTTP_SERVER_IP+":"+IGNITE_SERVER_PORT;
+    
+    public final static long IGNITE_CACHE_SIZE_DEFAULT = 5L * 1024 * 1024 * 1024;
+    
+    public final static String IGNITE_ATOMIC_SEQUENCE = "myStreamSequence";
+    
 }
