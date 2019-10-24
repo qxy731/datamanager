@@ -23,9 +23,9 @@ public class IgniteFilePojo implements Serializable{
 	 */
 	private String key2;
 	
-	private int key1Value;
+	private long key1Value;
 	
-	private int key2Value;
+	private long key2Value;
 	/**
 	 * 维度相关的衍生变量名数组
 	 */
@@ -55,19 +55,19 @@ public class IgniteFilePojo implements Serializable{
 		this.key2 = key2;
 	}
 	
-	public int getKey1Value() {
+	public long getKey1Value() {
 		return key1Value;
 	}
 
-	public void setKey1Value(int key1Value) {
+	public void setKey1Value(long key1Value) {
 		this.key1Value = key1Value;
 	}
 
-	public int getKey2Value() {
+	public long getKey2Value() {
 		return key2Value;
 	}
 
-	public void setKey2Value(int key2Value) {
+	public void setKey2Value(long key2Value) {
 		this.key2Value = key2Value;
 	}
 

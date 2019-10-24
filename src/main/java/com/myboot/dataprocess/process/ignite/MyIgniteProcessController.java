@@ -1,6 +1,5 @@
 package com.myboot.dataprocess.process.ignite;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,15 +34,16 @@ public class MyIgniteProcessController {
 	
 	@ApiOperation(value="sql查询ignite数据", notes="sql查询ignite数据")
 	@RequestMapping(value = "/query", method = {RequestMethod.POST,RequestMethod.GET})
-	public StatusInfo<List<List<?>>> query(@RequestBody Map<String,String> jsonStr) {
-		StatusInfo<List<List<?>>> spi = null;
+	public StatusInfo<Map<String,Object>> query(@RequestBody Map<String,String> jsonStr) {
+		StatusInfo<Map<String,Object>> spi = null;
     	try {
-    		String sql = jsonStr.get("sql")==null?"":jsonStr.get("sql").toString();
-    		List<List<?>> list = service.query(sql);
-			spi = new StatusInfo<List<List<?>>>(list);
+    		//String sql = jsonStr.get("fileNo")==null?"":jsonStr.get("sql").toString();
+    		Map<String,Object> map = service.query(jsonStr);
+			spi = new StatusInfo<Map<String,Object>>(map);
     	}catch(Exception e) {
 			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
 			log.info(ErrorMessage.msg_opt_fail.getMsg());
+			e.printStackTrace();
 		}
     	return spi;
 	}
@@ -54,11 +54,16 @@ public class MyIgniteProcessController {
 		StatusInfo<Map<String, Object>> spi = null;
     	try {
     		String fileNames = jsonStr.get("fileNames")==null?"":jsonStr.get("fileNames").toString();
-    		Map<String, Object> map = service.save(fileNames.split(","));
-			spi = new StatusInfo<Map<String, Object>>(map);
+    		String[] fileNameArr = null;
+    		if(!fileNames.equals("")&&fileNames.length()>0) {
+    			fileNameArr = fileNames.split(",");
+    		}
+    		Map<String, Object> map = service.save(fileNameArr);
+    		spi = new StatusInfo<Map<String, Object>>(map);
     	}catch(Exception e) {
 			spi = new StatusInfo<>(ErrorMessage.msg_opt_fail);
 			log.info(ErrorMessage.msg_opt_fail.getMsg());
+			e.printStackTrace();
 		}
     	return spi;
 	}

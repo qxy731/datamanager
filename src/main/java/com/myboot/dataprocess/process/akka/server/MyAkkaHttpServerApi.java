@@ -2,6 +2,7 @@ package com.myboot.dataprocess.process.akka.server;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
@@ -15,6 +16,7 @@ import akka.actor.ActorSystem;
 import akka.http.javadsl.ConnectHttp;
 import akka.http.javadsl.Http;
 import akka.http.javadsl.model.HttpEntity;
+import akka.http.javadsl.model.HttpHeader;
 import akka.http.javadsl.model.HttpResponse;
 import akka.stream.ActorMaterializer;
 import akka.stream.Materializer;
@@ -47,6 +49,11 @@ public class MyAkkaHttpServerApi {
 		        if(map==null) {
 		        	return null;
 		        }
+		        Optional<HttpHeader> reqApiOpt = req.getHeader("api");
+				Optional<HttpHeader> reqModeOpt = req.getHeader("reqMode");
+				Optional<HttpHeader> dinstModeOpt = req.getHeader("dinstMode");
+				//Optional<HttpHeader> dataModeOpt = req.getHeader("dataMode");
+				log.info("reqApiOpt:"+reqApiOpt.toString()+"&reqModeOpt:"+reqModeOpt.toString()+"&dinstModeOpt:"+dinstModeOpt.toString());
 		        String reqNo = map.get("reqNo")==null?"":map.get("reqNo").toString();
 				EvalResultDto payload = new EvalResultDto(reqNo);
 				payload.setResultMap(map);

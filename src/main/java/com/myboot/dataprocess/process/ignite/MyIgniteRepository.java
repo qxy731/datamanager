@@ -71,7 +71,7 @@ public class MyIgniteRepository {
 	public static IgniteCache<String, Object> getIgniteCache() {
 	    // 5 GB maximum size
 		ignite = getIgnite();
-		igniteCfg.getDataStorageConfiguration().getDefaultDataRegionConfiguration().setMaxSize(MyConstants.IGNITE_CACHE_SIZE_DEFAULT);
+		//igniteCfg.getDataStorageConfiguration().getDefaultDataRegionConfiguration().setMaxSize(MyConstants.IGNITE_CACHE_SIZE_DEFAULT);
 	    CacheConfiguration<String, Object> cacheCfg = new CacheConfiguration<>(MyConstants.IGNITE_CACHE_KEY_DEFAULT);
 	    cacheCfg.setCopyOnRead(false);
 	    //cacheCfg.setCacheMode(cacheMode)

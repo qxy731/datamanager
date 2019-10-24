@@ -90,11 +90,11 @@ public class MyKafkaConsumerServiceImpl implements MyKafkaConsumerService {
                 /**第一步：向akka传送数据并回写Kafka*/
                 akkaService.processAkka(mapMessage);
                 /**第二步：向phoenix保存数据*/
-// 				String myDataFlag = mapMessage.get(MyConstants.MY_DATA_FLAG_NAME)==null?MyConstants.MY_DATA_FLAG_REAL:mapMessage.get(MyConstants.MY_DATA_FLAG_NAME).toString();
-// 				if(MyConstants.MY_DATA_FLAG_REAL.equals(myDataFlag)) {
-// 					 phoenixService.processPhoenix(mapMessage,0);
-// 				}
-                phoenixService.processPhoenix(mapMessage, 0);
+ 				String myDataFlag = mapMessage.get(MyConstants.MY_DATA_FLAG_NAME)==null?MyConstants.MY_DATA_FLAG_REAL:mapMessage.get(MyConstants.MY_DATA_FLAG_NAME).toString();
+ 				if(MyConstants.MY_DATA_FLAG_REAL.equals(myDataFlag)) {
+ 					 phoenixService.processPhoenix(mapMessage,0);
+ 				}
+                //phoenixService.processPhoenix(mapMessage, 0);
                 long end = System.currentTimeMillis();
                 log.info("MyKafkaConsumerServiceImpl#listener:receive " +sourceCount+" source kafka message consume total cost :" + (end - start) +"ms");
                 sourceEndTime = end;
@@ -105,7 +105,7 @@ public class MyKafkaConsumerServiceImpl implements MyKafkaConsumerService {
         log.info("==================MyKafkaCustermer listener end ========================");
     }
 
-    @KafkaListener(topics = {"${kafka.other.dest.topic}"})
+ /*   @KafkaListener(topics = {"${kafka.other.dest.topic}"})*/
     public void listenerResult(String content) {
         resultCount++;
         if (resultCount == 1) {

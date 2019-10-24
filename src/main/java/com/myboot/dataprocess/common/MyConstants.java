@@ -31,16 +31,16 @@ public class MyConstants {
     public final static String MY_APPLICATION_DATE_DEFAULT = "2019-10-13";
     
     /**AKKAHTTP,HTTPCLIENT*/
-   // public final static String HTTP_TYPE = "AKKAHTTP";
-	 public final static String HTTP_TYPE = "HTTPCLIENT";
+   //public final static String HTTP_TYPE = "AKKAHTTP";
+   public final static String HTTP_TYPE = "HTTPCLIENT";
 	
     
     //public final static String HTTP_SERVER_IP = "127.0.0.1";
     public final static int HTTP_SERVER_PORT = 13551;
     //public final static int HTTP_SERVER_PORT = 8090;
     
-    public final static String HTTP_SERVER_IP = "182.180.115.236"; 
-    //public final static String HTTP_SERVER_IP = "182.180.183.12"; 
+    //public final static String HTTP_SERVER_IP = "182.180.115.236"; 
+    public final static String HTTP_SERVER_IP = "182.180.183.12"; 
     public final static String HTTP_SERVER_PROJECT = "";
     //public final static String HTTP_SERVER_PROJECT = "/datamanager";
     public final static String HTTP_SERVER_METHOD = "/call";
@@ -54,7 +54,7 @@ public class MyConstants {
     //public final static String HTTP_URL = "http://182.180.115.236:13551/call";
     //public final static String HTTP_URL = "http://127.0.0.1:8090/datamanager/call";
     
-    public final static String IGNITE_CACHE_KEY_DEFAULT = "myStreamCache";
+    public final static String IGNITE_CACHE_KEY_DEFAULT = "dinst-realtime";
     
     public final static String IGNITE_SERVER_PORT = "47500..47509";
 

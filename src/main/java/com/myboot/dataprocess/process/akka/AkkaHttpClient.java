@@ -37,12 +37,12 @@ public class AkkaHttpClient {
 		  map.put("reqNo",UUID.randomUUID().toString());
 		  String jsonStr = gson.toJson(map);
 		  HttpRequest request = HttpRequest.POST(MyConstants.HTTP_URL).withEntity(jsonStr);
-		  request.addHeader(HttpHeader.parse("Content-Type", "application/json;charset=utf8"));
-		  request.addHeader(HttpHeader.parse("reqTimeMs", System.currentTimeMillis()+""));
-		  request.addHeader(HttpHeader.parse("api", "tradErm02"));
-		  request.addHeader(HttpHeader.parse("reqMode", "slow"));
-		  request.addHeader(HttpHeader.parse("dinstMode", "his"));
-		  request.addHeader(HttpHeader.parse("dataMode", "real_data"));
+		  request = request.addHeader(HttpHeader.parse("Content-Type", "application/json;charset=utf8"));
+		  request = request.addHeader(HttpHeader.parse("reqTimeMs", System.currentTimeMillis()+""));
+		  request = request.addHeader(HttpHeader.parse("api", "tradErm02"));
+		  request = request.addHeader(HttpHeader.parse("reqMode", "slow"));
+		  request = request.addHeader(HttpHeader.parse("dinstMode", "his"));
+		  request = request.addHeader(HttpHeader.parse("dataMode", "real_data"));
 		  try {
 			      HttpResponse response = http.singleRequest(request, materializer).toCompletableFuture().get(15, TimeUnit.SECONDS);
 			      if(response == null) {
