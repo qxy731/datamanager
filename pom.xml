@@ -23,7 +23,7 @@
 		<hadoop.version>2.6.0-cdh5.16.1</hadoop.version>
 		<hbase.version>1.2.5</hbase.version>
 		<kafka.version>1.0.1</kafka.version>
-		<zookeeper.version>3.4.5-cdh5.16.1</zookeeper.version>
+		<zookeeper.version>3.4.14</zookeeper.version>
 		<spark.version>2.3.0</spark.version>
 		<scala.binary.version>2.12</scala.binary.version>
 		<maven-jar-plugin.version>3.0.0</maven-jar-plugin.version>
