@@ -20,7 +20,7 @@
 		<spring-cloud.version>Greenwich.SR3</spring-cloud.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<hadoop.version>2.6.0-cdh5.16.1</hadoop.version>
+		<hadoop.version>2.7.0</hadoop.version>
 		<hbase.version>1.2.5</hbase.version>
 		<kafka.version>1.0.1</kafka.version>
 		<zookeeper.version>3.4.5-cdh5.16.1</zookeeper.version>
